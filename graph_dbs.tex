@@ -114,9 +114,10 @@ Assim como outros bancos de dados NoSQL, os bancos de dados em grafos
 são muito utilizados em aplicações que precisam armazenar um grande 
 volume de dados. Para atender a este requisito, alguns bancos de dados
 baseados em grafos permitem armazenamento distribuído. Este tipo de 
-solução precisa implementar particionamento de dados, além disso, um 
+solução precisa implementar particionamento de dados. Além disso, um 
 sistema distribuído deve providenciar maneiras de responder a consultas 
-que acessam informações de vértices alocados em diferentes máquinas. 
+que acessam informações de vértices alocados em diferentes máquinas de
+uma rede. 
 
 Neste artigo, nosso principal objetivo é apresentar os conceitos 
 fundamentais e as principais soluções para implementar bancos de dados
@@ -154,8 +155,8 @@ aspectos com maior formalismo, definimos o conceito de corte.
 
 Um corte é um particionamento em dois conjuntos disjuntos de vértices de
 um grafo. Seja $G = (V, E)$ um grafo, então um conjunto $S \subseteq V$ 
-de vértices induz o corte $(S, V \setminus S)$. Uma aresta $e \in E$ é
-chamada de aresta do corte se ela atravessa as partes, ou seja, se
+de vértices induz o corte $(S, V \setminus S)$. Um arco $e \in E$ é
+chamada de arco do corte se ele atravessa as partes, ou seja, se
 $e = (u, v)$ com $u \in S$ e $v \notin S$, ou $u \notin S$ e $v \in S$.
 Chamamos de tamanho do corte o número de arcos que são arcos do corte. A
 figura~\ref{fig:example_cut} apresenta um exemplo de corte em um grafo.
@@ -180,10 +181,10 @@ particionamento, podemos analisar o balanceamento de processamento
 dos nós de computação de acordo com o número de partes (e vértices) 
 que são alocadas aos nós de computação. Além disso, é possível analisar
 a quantidade de comunicação entre nós de acordo com a quantidade de
-arestas que conectam diferentes partes (arestas de algum corte que), 
-que podem estar alocadas em dois nós de computação diferentes.
+arcos que conectam diferentes partes, que podem estar alocadas em dois 
+nós de computação diferentes.
 
-{\color{blue} Se formos falar de cortes baseados em arestas, é melhor
+{\color{blue} Se formos falar de cortes baseados em arcos, é melhor
 adicionar mais um pedaço de texto explicando esse tipo de corte.}
 
 \section{Particionamento de grafos}
@@ -194,7 +195,46 @@ adicionar mais um pedaço de texto explicando esse tipo de corte.}
 % - e se quisermos levar em conta os nós que são mais acessados?
 %   - pomos atualizar estas medidas com  pesos em arcos e nós.
 % Quais são as principais abordagens para se fazer um particionamento?
+% particionamento online?
+O particionamento de um grafo é o processo que permite dividir um grafo
+em diferentes partes, que podem ser alocadas em diferentes máquinas, 
+permitindo o processamento e armazenamento distribuído do grafo. Nesta
+seção, apresentaremos três diferentes abordagens de particionamento.
+A primeira, baseada no algoritmo METIS~\cite{metis}, é uma heurística
+que tenta minimizar a quantidade de arcos que conectam partes 
+diferentes; a segunda faz um particionamento aleatório; e a terceira 
+particiona os vértices de acordo com o valor de alguns atributos destes
+vértices.
+
 \subsection{O algoritmo METIS}
+O algoritmo METIS tem como objetivo produzir um particionamento com
+$k$ partes que minimiza a quantidade de arcos atravessando partes. O
+problema de encontrar tal partição é chamado $k-$particionamento de um 
+grafo, e vamos defini-lo assim: dado um grafo $G = (V, E)$, com 
+$|V| = n$, particione $V$ em $k$ conjuntos $V_1, V_2, \ldots, V_k$ de
+maneira que $V_i \cap V_j = \emptyset$ para $i \neq j$, 
+$\bigcup_{i = 1}^k V_i = V$, e $|V_i| = n / k$ (sem perda de 
+generalidade, se $n$ não é divisível por k, então adicione nós 
+"fantasmas" até que $k | n$). O $k-$particionamento também pode ser 
+generalizado ao considerar pesos para arcos, adicionando uma informação
+de importância ou relevância para as conexões, mas por facilidade vamos
+considerar apenas o caso em que todos os peso dos arcos é igual, 
+consistente com a definição que apresentamos.
+
+O $k-$particionamento possui importância em aplicações de computação 
+paralela e distribuída, e foi provado ser 
+NP-completo~\cite{graphpartitioning}, ou seja, o problema se torna 
+intratável rapidamente com o aumento da instância. Por isso, o algoritmo 
+METIS é uma heurística, ou seja, a solução produzida não é ótima em 
+geral. 
+
+
+
+%O peso de um arco é uma informação a priori do grafo que pode ser 
+%interpretado como a importância ou relevância de tal arco; quando o peso 
+%é igual para todos os arcos, o problema é equivalente a minimizar a 
+%quantidade de arcos que atravessam partes.
+
 \subsection{Particionamentos aleatórios}
 \subsection{Particionamentos com semântica}
 
@@ -209,6 +249,7 @@ adicionar mais um pedaço de texto explicando esse tipo de corte.}
 \bibitem{biochem4j} N. Swainston et al., ``biochem4j: Integrated and extensible biochemical knowledge through graph databases,” PLOS ONE, vol. 12, no. 7, p. e0179130, Jul. 2017. 
 \bibitem{biomol} F. Olken, ``Graph Data Management for Molecular Biology,” OMICS: A Journal of Integrative Biology, vol. 7, no. 1, pp. 75–78, Jan. 2003.
 \bibitem{sematicweb} B. McBride, ``Jena: a semantic Web toolkit,” IEEE Internet Computing, vol. 6, no. 6, pp. 55–59, Nov. 2002.
-
+\bibitem{metis} Karypis, G., \& Kumar, V. (1998). ``A Fast and High Quality Multilevel Scheme for Partitioning Irregular Graphs". SIAM Journal on Scientific Computing, 20(1), 359–392. https://doi.org/10.1137/s1064827595287997
+\bibitem{graphpartitioning} Andreev, K., \& Racke, H. (2006). ``Balanced Graph Partitioning". Theory of Computing Systems, 39(6), 929–939. https://doi.org/10.1007/s00224-006-1350-7
 \end{thebibliography}
 \end{document}
