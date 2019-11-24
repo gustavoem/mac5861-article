@@ -12,6 +12,8 @@
 \usepackage[T1]{fontenc}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\graphicspath{{img/}}
 \begin{document}
 
 \title{Bancos de Dados em Grafos\\
@@ -129,11 +131,72 @@ fato no artigo}.
 acho que é maioria usado pra rede social(?))
 
 \section{Conceitos Fundamentais}
+Nesta seção apresentamos os conceitos fundamentais para entender o 
+funcionamento de bancos de dados e ferramentas de processamento de dados
+baseados em grafos, mais especificamente, em contextos distribuídos.
+
 \subsection{Graph DBMS versus Graph Analytics Systems}
-\subsection{Notação e representação de grafos (?)}
+%\subsection{Notação e representação de grafos (?)}
+
 \subsection{Cortes de grafos}
+O conceito de corte em grafo é importante para formalização e análise
+do particionamento de um grafo em um contexto distribuído. Para se 
+trabalhar com grafos de maneira distribuída, é necessário criar um 
+particionamento do grafo, para que cada parte seja alocada em um nó da 
+rede de computadores usada. Um particionamento precisa ser feito de 
+maneira que o processamento do grafo seja balanceado, ou seja, as 
+máquinas devem ter números de acessos similares; além disso, é 
+importante fazer com que os processamentos do grafo sejam feitos com o 
+menor número de nós de computação possível, pois o processamento que 
+envolve mais de um nó de computação necessita de maior comunicação pela 
+rede, aumentando a latência da operação. Para analisar estes dois
+aspectos com maior formalismo, definimos o conceito de corte.
+
+Um corte é um particionamento em dois conjuntos disjuntos de vértices de
+um grafo. Seja $G = (V, E)$ um grafo, então um conjunto $S \subseteq V$ 
+de vértices induz o corte $(S, V \setminus S)$. Uma aresta $e \in E$ é
+chamada de aresta do corte se ela atravessa as partes, ou seja, se
+$e = (u, v)$ com $u \in S$ e $v \notin S$, ou $u \notin S$ e $v \in S$.
+Chamamos de tamanho do corte o número de arcos que são arcos do corte. A
+figura~\ref{fig:example_cut} apresenta um exemplo de corte em um grafo.
+
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.5\textwidth]{fund_conc/cut_example.pdf}
+    \end{center}
+    \caption{Grafo com exemplo de corte. O corte apresentado é definido
+    pelos conjuntos de vertices ${E, C}$, em azul, e $A, B, D$, em 
+    branco. Os arcos de cor vermelha são os arcos deste corte. No total,
+    são 4 arcos vermelhos neste corte, ou seja, o tamanho deste corte
+    é 4.}
+    \label{fig:example_cut}
+\end{figure}
+
+Note que qualquer particionamento (não apenas bipartições) do conjunto 
+de vértices de um grafo pode ser realizado após recursivas aplicações de 
+cortes. Portanto, é possível construir e analisar cortes olhando apenas
+para bipartições do grafo original. Perceba também que ao fazer um 
+particionamento, podemos analisar o balanceamento de processamento 
+dos nós de computação de acordo com o número de partes (e vértices) 
+que são alocadas aos nós de computação. Além disso, é possível analisar
+a quantidade de comunicação entre nós de acordo com a quantidade de
+arestas que conectam diferentes partes (arestas de algum corte que), 
+que podem estar alocadas em dois nós de computação diferentes.
+
+{\color{blue} Se formos falar de cortes baseados em arestas, é melhor
+adicionar mais um pedaço de texto explicando esse tipo de corte.}
 
 \section{Particionamento de grafos}
+% por que é importante?
+% o que podemos analisar do grafo quando fazemos um particionamento
+% - balanceamento
+% - quantidade de links entre nós
+% - e se quisermos levar em conta os nós que são mais acessados?
+%   - pomos atualizar estas medidas com  pesos em arcos e nós.
+% Quais são as principais abordagens para se fazer um particionamento?
+\subsection{O algoritmo METIS}
+\subsection{Particionamentos aleatórios}
+\subsection{Particionamentos com semântica}
 
 \section{Sistemas Gerenciadores de Bancos de Dados em Grafos}
 \section{Graph Analytics Systems}
