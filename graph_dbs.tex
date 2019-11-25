@@ -9,17 +9,18 @@
 \usepackage{algorithmic}
 \usepackage{graphicx}
 \usepackage{textcomp}
-\usepackage{xcolor}
+%\usepackage{xcolor}
 \usepackage[brazilian]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\usepackage[table,xcdraw]{xcolor} % colored column lines
 
 \graphicspath{{img/}}
 \begin{document}
 
-\title{Bancos de Dados em Grafos Distribuídos\\
+\title{Bancos de Dados de Grafos Distribuídos\\
 %{\footnotesize \textsuperscript{*}Note: Sub-titles are not captured in Xplore and
 %should not be used}
 %\thanks{Identify applicable funding agency here. If none, delete this.}
@@ -299,22 +300,113 @@ O algoritmo METIS é até hoje um dos principais algoritmos de
 particionamento de grafos, e por isso é usado como base de comparação 
 para outras propostas~\cite{baselinemetis}.
 
-\subsection{Particionamentos aleatórios}
-\subsection{Particionamentos com semântica}
+
+\subsection{Particionamentos aleatórios e por intervalos}
+Um particionamento aleatório atribui partes aos vértices de maneira 
+aleatória e uniforme. Esta atribuição é feita de acordo com alguma 
+função de hash, que pode ser aplicada, por exemplo, no atributo
+de identificação do vértice. Este tipo de particionamento é facilmente 
+implementado visto que o único requisito é que uma função de hash 
+distribua os vértices de maneira equilibrada entre os nós.
+
+Um particionamento por intervalo é similar, e também precisa de uma 
+função de hash, mas ao invés de atribuir partes a valores de um 
+atributo, essa função atribui partes a intervalos dos valores de 
+atributos. Esta abordagem é útil quando há um atributo nos vértices que
+determina a chance de relacionamento entre vértices de acordo com 
+seus valores; por exemplo, se os vértices são pessoas com um atributo
+de latitude e longitude, então é razoável adimitir que os 
+relacionamentos (arcos) ocorrerão mais entre pessoas que tem valores
+próximos para esses atributos.
+
+Além de ser facilmente implementadais, essas estratégias precisam de 
+pouco processamento e pouco espaço de memória para identificar a qual 
+parte um vértice foi alocado. Outra vantagem desses métodos é que um 
+novo vértice do grafo pode ser atribuido para uma parte de maneira 
+rápida, diferente da abordagem de cortes mínimos.
+
+\subsection{Comparação entre abordagens de particionamento}
+Ambas abordagens apresentadas anteriormete podem ser aplicadas 
+vantajosamente. A estratégia baseada em cortes se aproveita da estrutura
+da estrutura do problema de interesse e pode produzir um particionamento 
+que possui poucos arcos conectando duas partes, ou seja, um 
+particionamento que agrupa as entidades que se relacionam constantemente 
+e, portanto, faz as consultas precisarem de menos comunicações entre
+nós de computação. No caso dos particionamentos aleatórios ou por
+intervalos, o processo de particionamento é simples de se implementar
+e necessita de pouco espaço de armazenamento. Além disso, 
+particionamentos aleatórios podem atribuir partes a novos vértices assim
+que eles são criados.
+
+Por outro lado, ambas abordagens também possuem desvantagens. A 
+principal desvantagem do particionamento por cortes é a sua 
+complexidade, de implementação e de recuperação das partes. Além disso, 
+no particionamento baseado em cortes, uma política precisa ser definida 
+para quando um novo vértice é criado: este vértice precisa ser 
+eventualmente colocado em alguma parte, mas deve ser considerado que 
+refazer todo processo de particionamento sempre que um novo nó é criado 
+é inviável. A desvantagem do método particionamento aleatório e não
+usar a estrutura dos dados do problema, o que pode fazer com que
+operações comuns causem um grande tráfego na rede, pois os nós 
+fortemente relacionados não estarão disponíveis nos mesmos locais.
+
+O trabalho de Khayyat et al. mostra que, de fato, não um consenso de
+qual é a melhor alternativa de particionamento~\cite{mizan}. Portanto,
+a escolha de uma estratégia de particionamento depende da aplicação. A 
+tabela~\ref{tab:partitions} apresenta os principais aspectos
+estratégias de particionamento que apresentamos nesta seção.
+
+\begin{table}[]
+\centering
+\caption{Características de abordagens de particionamento}
+\label{tab:partitions}
+\begin{tabular}{lcc}
+\hline
+& \begin{tabular}[c]{@{}c@{}}Particionamento \\ 
+    de corte mínimo
+  \end{tabular} & 
+  \multicolumn{1}{c}{\begin{tabular}
+            [c]{@{}c@{}}Particionamento aleatório \\ 
+             e por intervalo
+  \end{tabular}} \\ \hline
+
+\\
+Usa estrutura do grafo & Sim & Não \\
+\\
+\rowcolor[HTML]{DFDFDF} 
+\begin{tabular}[c]{@{}l@{}}Dificuldade de cálculo \\ 
+    do particionamento
+\end{tabular}  & Difícil & Fácil \\
+\\
+\begin{tabular}[c]{@{}l@{}}Necessita de armazenar\\ 
+        partes explicitamente
+\end{tabular} & Sim & Não \\
+\\
+\rowcolor[HTML]{DFDFDF} 
+    \begin{tabular}[c]{@{}l@{}}Atribuição de parte de\\ 
+        um novo nó
+    \end{tabular} & \begin{tabular}[c]{@{}c@{}}Depende de criação \\ 
+        de política
+    \end{tabular}  & Automática                                                                                              
+\\
+\end{tabular}
+\vspace{1em}
+\end{table}
 
 \section{Sistemas Gerenciadores de Bancos de Dados em Grafos}
 \section{Graph Analytics Systems}
 \subsection{Pregel}
 
 \begin{thebibliography}{00}
-\bibitem{nosqlorg} ``NoSQL Databases", http://nosql-database.org/.
-\bibitem{neo4jcustomers} ``Neo4j Customers", https://neo4j.com/customers/.
-\bibitem{neo4jquery} M. Hunger, R. Boyd. ``RDBMS \& Graphs: SQL vs. Cypher Query Languages" Neo4j Blog. Mar. 2016. https://neo4j.com/blog/sql-vs-cypher-query-languages/
-\bibitem{biochem4j} N. Swainston et al., ``biochem4j: Integrated and extensible biochemical knowledge through graph databases,” PLOS ONE, vol. 12, no. 7, p. e0179130, Jul. 2017. 
-\bibitem{biomol} F. Olken, ``Graph Data Management for Molecular Biology,” OMICS: A Journal of Integrative Biology, vol. 7, no. 1, pp. 75–78, Jan. 2003.
+\bibitem{nosqlorg} ``NoSQL Databases'', http://nosql-database.org/.
+\bibitem{neo4jcustomers} ``Neo4j Customers'', https://neo4j.com/customers/.
+\bibitem{neo4jquery} M. Hunger, R. Boyd. ``RDBMS \& Graphs: SQL vs. Cypher Query Languages'' Neo4j Blog. Mar. 2016. https://neo4j.com/blog/sql-vs-cypher-query-languages/
+\bibitem{biochem4j} N. Swainston et al., ``biochem4j: Integrated and extensible biochemical knowledge through graph databases'', PLOS ONE, vol. 12, no. 7, p. e0179130, Jul. 2017. 
+\bibitem{biomol} F. Olken, ``Graph Data Management for Molecular Biology'', OMICS: A Journal of Integrative Biology, vol. 7, no. 1, pp. 75–78, Jan. 2003.
 \bibitem{sematicweb} B. McBride, ``Jena: a semantic Web toolkit,” IEEE Internet Computing, vol. 6, no. 6, pp. 55–59, Nov. 2002.
-\bibitem{metis} Karypis, G., \& Kumar, V. (1998). ``A Fast and High Quality Multilevel Scheme for Partitioning Irregular Graphs". SIAM Journal on Scientific Computing, 20(1), 359–392. https://doi.org/10.1137/s1064827595287997
-\bibitem{graphpartitioning} Andreev, K., \& Racke, H. (2006). ``Balanced Graph Partitioning". Theory of Computing Systems, 39(6), 929–939. https://doi.org/10.1007/s00224-006-1350-7
-\bibitem{baselinemetis} D. Avdiukhin, S. Pupyrev, e G. Yaroslavtsev, ``Multi-dimensional balanced graph partitioning via projected gradient descent”, Proceedings of the VLDB Endowment, vol. 12, nº 8, p. 906–919, abr. 2019.
+\bibitem{metis} Karypis, G., \& Kumar, V. (1998). ``A Fast and High Quality Multilevel Scheme for Partitioning Irregular Graphs''. SIAM Journal on Scientific Computing, 20(1), 359–392. https://doi.org/10.1137/s1064827595287997
+\bibitem{graphpartitioning} Andreev, K., \& Racke, H. (2006). ``Balanced Graph Partitioning''. Theory of Computing Systems, 39(6), 929–939. https://doi.org/10.1007/s00224-006-1350-7
+\bibitem{baselinemetis} D. Avdiukhin, S. Pupyrev, e G. Yaroslavtsev, ``Multi-dimensional balanced graph partitioning via projected gradient descent'', Proceedings of the VLDB Endowment, vol. 12, nº 8, p. 906–919, abr. 2019.
+\bibitem{mizan} Z. Khayyat, K. Awara, A. Alonazi, H. Jamjoom, D. Williams, e P. Kalnis, ``Mizan'', in Proceedings of the 8th ACM European Conference on Computer Systems - EuroSys ’13, 2013.
 \end{thebibliography}
 \end{document}
