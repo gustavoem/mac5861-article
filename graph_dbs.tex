@@ -3,6 +3,9 @@
 % The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}
 \usepackage{algorithmic}
 \usepackage{graphicx}
 \usepackage{textcomp}
@@ -16,7 +19,7 @@
 \graphicspath{{img/}}
 \begin{document}
 
-\title{Bancos de Dados em Grafos\\
+\title{Bancos de Dados em Grafos Distribuídos\\
 %{\footnotesize \textsuperscript{*}Note: Sub-titles are not captured in Xplore and
 %should not be used}
 %\thanks{Identify applicable funding agency here. If none, delete this.}
@@ -206,20 +209,24 @@ diferentes; a segunda faz um particionamento aleatório; e a terceira
 particiona os vértices de acordo com o valor de alguns atributos destes
 vértices.
 
-\subsection{O algoritmo METIS}
+\subsection{Particionamento com cortes mínimos}
 O algoritmo METIS tem como objetivo produzir um particionamento com
-$k$ partes que minimiza a quantidade de arcos atravessando partes. O
-problema de encontrar tal partição é chamado $k-$particionamento de um 
-grafo, e vamos defini-lo assim: dado um grafo $G = (V, E)$, com 
-$|V| = n$, particione $V$ em $k$ conjuntos $V_1, V_2, \ldots, V_k$ de
-maneira que $V_i \cap V_j = \emptyset$ para $i \neq j$, 
-$\bigcup_{i = 1}^k V_i = V$, e $|V_i| = n / k$ (sem perda de 
-generalidade, se $n$ não é divisível por k, então adicione nós 
+$k$ partes que minimiza a quantidade de arcos atravessando partes, ou 
+seja, produz cortes minímos no grafo. O problema de encontrar tal 
+partição é chamado $k-$particionamento de um grafo, e vamos defini-lo 
+assim: dado um grafo $G = (V, E)$, com $|V| = n$, particione $V$ em $k$ 
+conjuntos $V_1, V_2, \ldots, V_k$ de maneira que 
+$V_i \cap V_j = \emptyset$ para $i \neq j$, $\bigcup_{i = 1}^k V_i = V$, 
+e $|V_i| = n / k$ para $i \in \{1, \ldots, k\}$ (sem perda de 
+generalidade, se $n$ não é divisível por $k$, então adicione nós 
 "fantasmas" até que $k | n$). O $k-$particionamento também pode ser 
-generalizado ao considerar pesos para arcos, adicionando uma informação
-de importância ou relevância para as conexões, mas por facilidade vamos
-considerar apenas o caso em que todos os peso dos arcos é igual, 
-consistente com a definição que apresentamos.
+generalizado ao considerar pesos para arcos, adicionando uma informação 
+de importância ou relevância para as conexões, mas por facilidade vamos 
+considerar apenas o caso em que todos os pesos dos arcos são iguais, o 
+que é consistente com a definição que apresentamos. Lembre também que
+um corte em um grafo também é uma bipartição do grafo; a escolha por um
+dos nomes ao longo desta seção será feita de maneira conveniente à
+explicação dos conceitos.
 
 O $k-$particionamento possui importância em aplicações de computação 
 paralela e distribuída, e foi provado ser 
@@ -228,12 +235,69 @@ intratável rapidamente com o aumento da instância. Por isso, o algoritmo
 METIS é uma heurística, ou seja, a solução produzida não é ótima em 
 geral. 
 
+A heurística METIS resolve o problema do $k-$particionamento realizando
+aplicações recursivas de um procedimento de biparticionamento. O número
+total de chamadas recursivas feitas é no máximo $\ceil{\log x}$. O 
+algoritmo de bipartição é também uma heurística que tenta achar o
+corte de menor custo no grafo. Como achar esta partição no grafo pode 
+tomar muito tempo, uma etapa de encolhimento é feita antes, e depois 
+disso o grafo bipartido é expandido e refinado até se obter uma 
+bipartição do grafo original. O algoritmo de biparticionamento é 
+composto por três etapas:
+\begin{itemize}
+\item{encolhimento:} pares de vértices são escolhidos dois 
+    a dois, e são acoplados em um vértice novo que reune todos os arcos
+    que estavam nos vértices antigos. Esta etapa é repetida até o 
+    grafo ser considerado pequeno;
+\item{biparticionamento:} uma heurística (novamente) determina um corte
+    com tamanho pequeno;
+\item{expansão:} os vértices acoplados são desfeitos ao mesmo tempo que
+    a bipartição é atualizada de acordo com os novos nós.
+\end{itemize}
 
+Durante o encolhimento, os vértices devem ser escolhidos dois a dois sem
+repetições, o que é equivalente a escolher um emparelhamento do grafo.
+Um emparelhamento é um conjunto de arcos de um grafo que não tem 
+vértices em comum. O algoritmo METIS implementa uma heurística
+de emparelhamento máximo (com maior número de arcos), para escolher os
+pares de vértices para serem acoplados. A vantagem de fazer um 
+emparelhamento máximo durante o encolhimento é diminuir o número de
+iterações até que o grafo fique pequeno. Segundo Karypis et al., um
+grafo de tamanho 100 é pequeno o suficiente para seguir para etapa de 
+bipartição.
+% TODO: talvez adicionar uma figura de matching aqui
 
-%O peso de um arco é uma informação a priori do grafo que pode ser 
-%interpretado como a importância ou relevância de tal arco; quando o peso 
-%é igual para todos os arcos, o problema é equivalente a minimizar a 
-%quantidade de arcos que atravessam partes.
+Com o grafo encolhido, uma bipartição deve ser mais facilmente 
+encontrada. Porém, como este problema ainda é 
+NP-difícil~\cite{graphpartitioning}, uma outra heurística é usada. Esta
+heurística constrói um corte do grafo, e é um algoritmo guloso que 
+começa com um corte que contém apenas um vértice, escolhido 
+aleatóriamente, e a cada iteração aumenta o conjunto de vértices do 
+corte ao adicionar um novo vértice, até que o corte tenha metade dos 
+vértices do grafo. Em cada etapa do algoritmo, um vértice de fora do 
+corte que está conectado a um arco do corte é escolhido. Esta escolha é 
+feita de acordo com o ganho de arcos de corte que o novo vértice pode 
+adicionar (ou remover) no corte atual. Seja $S_i$ o conjunto de vértices 
+do corte da $i-$ésima iteração, então, definimos o ganho de adicionar um 
+vértice como:
+
+\begin{equation}
+    g_v = \abs{\{u \mid (v, u) \in E, u \notin S_i\}} - 
+          \abs{\{u \mid (v, u) \in E, u \in S_i\}} 
+\end{equation}
+
+A medida $g_v$ também é útil para a última etapa do biparticionamento, 
+que ao mesmo tempo que expande o grafo colapsado, faz um refinamento do 
+biparticionamento produzido. A cada iteração desta etapa, um nó é 
+desacoplado e então todos os vértices da borda do corte do 
+biparticionamento são analisados para uma possível troca de partes. Na
+prática, esta etapa é aplicada com otimizações que tornam desnecessário
+analisar todos os vértices da borda por várias iterações, tornando essa
+heurística mais eficiente.
+
+O algoritmo METIS é até hoje um dos principais algoritmos de 
+particionamento de grafos, e por isso é usado como base de comparação 
+para outras propostas~\cite{baselinemetis}.
 
 \subsection{Particionamentos aleatórios}
 \subsection{Particionamentos com semântica}
@@ -251,5 +315,6 @@ geral.
 \bibitem{sematicweb} B. McBride, ``Jena: a semantic Web toolkit,” IEEE Internet Computing, vol. 6, no. 6, pp. 55–59, Nov. 2002.
 \bibitem{metis} Karypis, G., \& Kumar, V. (1998). ``A Fast and High Quality Multilevel Scheme for Partitioning Irregular Graphs". SIAM Journal on Scientific Computing, 20(1), 359–392. https://doi.org/10.1137/s1064827595287997
 \bibitem{graphpartitioning} Andreev, K., \& Racke, H. (2006). ``Balanced Graph Partitioning". Theory of Computing Systems, 39(6), 929–939. https://doi.org/10.1007/s00224-006-1350-7
+\bibitem{baselinemetis} D. Avdiukhin, S. Pupyrev, e G. Yaroslavtsev, ``Multi-dimensional balanced graph partitioning via projected gradient descent”, Proceedings of the VLDB Endowment, vol. 12, nº 8, p. 906–919, abr. 2019.
 \end{thebibliography}
 \end{document}
