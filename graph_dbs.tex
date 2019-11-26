@@ -383,8 +383,8 @@ Usa estrutura do grafo & Sim & Não \\
 \end{tabular} & Sim & Não \\
 \\
 \rowcolor[HTML]{DFDFDF} 
-    \begin{tabular}[c]{@{}l@{}}Atribuição de parte de\\ 
-        um novo nó
+    \begin{tabular}[c]{@{}l@{}}Atribuição de parte para\\ 
+        um novo vértice
     \end{tabular} & \begin{tabular}[c]{@{}c@{}}Depende de criação \\ 
         de política
     \end{tabular}  & Automática                                                                                              
@@ -394,8 +394,46 @@ Usa estrutura do grafo & Sim & Não \\
 \end{table}
 
 \section{Sistemas Gerenciadores de Bancos de Dados em Grafos}
+
+
 \section{Graph Analytics Systems}
+Com o crescimento das aplicações na internet e em outras áreas como 
+transportes e comércio, a demanda por processamento eficiente e 
+distribuído de grafos cresceu. Outros arcabouços de processamento 
+distribuído com propósitos mais genéricos, como MapReduce, podem não ser
+adequados a alguns problemas de grafos. Por isso, tornou-se necessário a
+criação de arcabouços de processamento distribuído especializados em 
+grafos, que permitem escrever programas que fazem cálculos sobre grafos
+de maneira mais intuitiva e eficiente. Chamamos estes arcabouços de 
+{\em Graph Analytics Systems} (GASs).
+
+Uma das primeiras soluções GAS foi o sistema Pregel, criado por 
+engenheiros do Google~\cite{pregel}. Pregel possui uma abordagem de 
+processamento centrada nos vértices do grafo. Os programas deste 
+arcabouço funcionam em rodadas chamadas de {\em supersteps}; a cada 
+{\em superstep} um vértice pode receber uma mensagem, fazer uma 
+computação, enviar uma mensagem, ou decidir parar. Um programa acaba 
+quando todos os vértices decidem parar. Este método de computação também 
+é a base para outros GAS, como o Giraph~\cite{giraph}, 
+Surfer~\cite{surfer}, GoldenOrb~\cite{goldenorb} e Mizan~\cite{mizan}. 
+Estas variações do sistema Pregel normalmente se diferenciam pelo 
+sistema de armazenamento utilizado e também pelo tipo de particionamento
+de grafo utilizado.
+
+O sistema Pregel e suas variantes podem ainda não ser adequados para 
+algumas aplicações, principalmente aquelas em que são construídos grafos
+densos. Em um grafo denso, a quantidade de arcos pode ser muito grande, 
+criando um alto tráfego de informação localmente e também entre os nós
+de computação. Como solução para este problema o sistema Blogel foi 
+desenvolvido. Este sistema utiliza o mesmo método de processamento que o
+Pregel, porém faz cálculos centrados em blocos de vértices, evitando
+comunicação excessiva entre vértices.
+
 \subsection{Pregel}
+% Surfer [4] utilizes min-cut graph partitioning to improve the performance of distributed vertex centric graph processing
+
+
+\subsection{Blogel}
 
 \begin{thebibliography}{00}
 \bibitem{nosqlorg} ``NoSQL Databases'', http://nosql-database.org/.
@@ -408,5 +446,10 @@ Usa estrutura do grafo & Sim & Não \\
 \bibitem{graphpartitioning} Andreev, K., \& Racke, H. (2006). ``Balanced Graph Partitioning''. Theory of Computing Systems, 39(6), 929–939. https://doi.org/10.1007/s00224-006-1350-7
 \bibitem{baselinemetis} D. Avdiukhin, S. Pupyrev, e G. Yaroslavtsev, ``Multi-dimensional balanced graph partitioning via projected gradient descent'', Proceedings of the VLDB Endowment, vol. 12, nº 8, p. 906–919, abr. 2019.
 \bibitem{mizan} Z. Khayyat, K. Awara, A. Alonazi, H. Jamjoom, D. Williams, e P. Kalnis, ``Mizan'', in Proceedings of the 8th ACM European Conference on Computer Systems - EuroSys ’13, 2013.
+\bibitem{pregel} G. Malewicz et al., ``Pregel'', in Proceedings of the 2010 international conference on Management of data - SIGMOD ’10, 2010.
+\bibitem{giraph} Avery, Ching. ``Giraph: Large-scale graph processing infrastructure on hadoop.'' Proceedings of the Hadoop Summit. Santa Clara 11.3 (2011): 5-9.
+\bibitem{surfer} Chen, Rishan, et al. ``Improving large graph processing on partitioned graphs in the cloud.'' Proceedings of the Third ACM Symposium on Cloud Computing. ACM, 2012.
+\bibitem{goldenorb} GoldenOrb. A Cloud-based Open Source Project for MassiveScale Graph Analysis. http://goldenorbos.org/, 2012
+
 \end{thebibliography}
 \end{document}
