@@ -55,17 +55,17 @@ component, formatting, style, styling, insert
 % representar diversos objetos da vida real.
 %
 % No contexto de bancos de dados, os arcos do grafos podem representar
-% relacionamentos entre entidades. 
+% relacionamentos entre entidades.
 
-% Esse tipo de representação nos permite extrair 
+% Esse tipo de representação nos permite extrair
 % informações complexas sobre relacionamentos de maneira simples, o que
 % muitas vezes não é possível em um BD relacional.
 
 % Dar um exemplo disso
 
 % Entretanto, esse tipo de banco de dados pode encontrar alguns desafios...
-% Muitas aplicações destes BDs incluem redes tão grandes que não é 
-% viável o armazenamento em uma única máquina, como exemplo, redes 
+% Muitas aplicações destes BDs incluem redes tão grandes que não é
+% viável o armazenamento em uma única máquina, como exemplo, redes
 % sociais. Portanto, é desejável que existam bancos de dados em grafos
 % que tem dados distribuídos.
 
@@ -73,60 +73,60 @@ component, formatting, style, styling, insert
 % capazes de conduzir processamentos que permitam extrair informações
 % sobre esses grafos, de maneira eficiente e escalável.
 
-% Durante o artigo, vamos apresentar as soluções mais conhecidas para 
-% enfrentar esses desafios, e também quais as características dos 
+% Durante o artigo, vamos apresentar as soluções mais conhecidas para
+% enfrentar esses desafios, e também quais as características dos
 % principais bancos de dados de grafos, de acordo com os aspectos que
 % apresentamos anteriormente.
 Grafos são objetos matemáticos que podem ser usados como estruturas de
-dados em diversas aplicações computacionais. Sistemas de Bancos de Dados 
-baseados em grafos são considerados bancos de dados 
-NoSQL~\cite{nosqlorg} e podem ser aplicados em diversos contextos, como 
-o de aplicativos da web; áreas industriais de transportes, 
-telecomunicação e comércio~\cite{neo4jcustomers}; e também em áreas de 
-pesquisa, como em bioquímica~\cite{biochem4j}, biologia 
+dados em diversas aplicações computacionais. Sistemas de Bancos de Dados
+baseados em grafos são considerados bancos de dados
+NoSQL~\cite{nosqlorg} e podem ser aplicados em diversos contextos, como
+o de aplicativos da web; áreas industriais de transportes,
+telecomunicação e comércio~\cite{neo4jcustomers}; e também em áreas de
+pesquisa, como em bioquímica~\cite{biochem4j}, biologia
 molecular~\cite{biomol} e web semântica~\cite{sematicweb}.
 
-Um grafo pode ser definido como uma dupla $G = (V, E)$, 
-em que $V$ é um conjunto de vértices (ou nós) e $E$ é um conjunto de 
-arcos, que conectam dois nós. Podemos representar um arco $e \in E$, 
-por uma dupla $e = (v_i, v_j)$ com $v_i \in V$ e $v_j \in V$. No 
-contexto de bancos de dados de grafos, usualmente um nó representa 
-uma entidade modelada, e arcos representam relacionamentos entre essas 
-entidades. É comum que os nós recebam rótulos que estão associados ao 
+Um grafo pode ser definido como uma dupla $G = (V, E)$,
+em que $V$ é um conjunto de vértices (ou nós) e $E$ é um conjunto de
+arcos, que conectam dois nós. Podemos representar um arco $e \in E$,
+por uma dupla $e = (v_i, v_j)$ com $v_i \in V$ e $v_j \in V$. No
+contexto de bancos de dados de grafos, usualmente um nó representa
+uma entidade modelada, e arcos representam relacionamentos entre essas
+entidades. É comum que os nós recebam rótulos que estão associados ao
 tipo de entidade modelada, e também um conjunto de propriedades em
-formato chave-valor, capaz de armazenar atributos da entidade. Além 
-disso, os arcos do modelo também podem receber rótulos que identificam 
+formato chave-valor, capaz de armazenar atributos da entidade. Além
+disso, os arcos do modelo também podem receber rótulos que identificam
 o tipo de relacionamento que é modelado, e um conjunto de propriedades
 que representam atributos do relacionamento.
 
 Bancos de dados baseados em grafos costumam ser aplicados em contextos
-em que os dados de interesse possuem relacionamentos complexos ou 
-simplesmente quando boa parte da informação está contida nos 
-relacionamentos. Nestes casos, um banco de dados relacional pode ser 
+em que os dados de interesse possuem relacionamentos complexos ou
+simplesmente quando boa parte da informação está contida nos
+relacionamentos. Nestes casos, um banco de dados relacional pode ser
 inadequado ou ineficiente. Considere, por exemplo, a relação
-{\ttfamily FABRICA (id\_fabricante, id\_produto)}. Em uma consulta em 
-que se deseja saber as informações dos produtos fabricados por uma 
-fábrica, no modelo relacional, é necessário fazer uma junção com a 
-relação que armazena os dados dos produtos, enquanto no modelo baseado 
-em grafos, basta percorrer os arcos do relacionamento 
-{\ttfamily FABRICA} que estão ligados ao nó que representa a fábrica de 
+{\ttfamily FABRICA (id\_fabricante, id\_produto)}. Em uma consulta em
+que se deseja saber as informações dos produtos fabricados por uma
+fábrica, no modelo relacional, é necessário fazer uma junção com a
+relação que armazena os dados dos produtos, enquanto no modelo baseado
+em grafos, basta percorrer os arcos do relacionamento
+{\ttfamily FABRICA} que estão ligados ao nó que representa a fábrica de
 interesse. Além de ser mais eficiente para algumas consultas, sistemas
-baseados em grafos podem ter consultas mais expressivas, capazes de 
+baseados em grafos podem ter consultas mais expressivas, capazes de
 representar relacionamentos complexos entre os dados~\cite{neo4jquery}.
 
 Assim como outros bancos de dados NoSQL, os bancos de dados em grafos
-são muito utilizados em aplicações que precisam armazenar um grande 
+são muito utilizados em aplicações que precisam armazenar um grande
 volume de dados. Para atender a este requisito, alguns bancos de dados
-baseados em grafos permitem armazenamento distribuído. Este tipo de 
-solução precisa implementar particionamento de dados. Além disso, um 
-sistema distribuído deve providenciar maneiras de responder a consultas 
+baseados em grafos permitem armazenamento distribuído. Este tipo de
+solução precisa implementar particionamento de dados. Além disso, um
+sistema distribuído deve providenciar maneiras de responder a consultas
 que acessam informações de vértices alocados em diferentes máquinas de
-uma rede. 
+uma rede.
 
-Neste artigo, nosso principal objetivo é apresentar os conceitos 
+Neste artigo, nosso principal objetivo é apresentar os conceitos
 fundamentais e as principais soluções para implementar bancos de dados
 baseados em grafos distribuídos, e também sistemas para o processamento
-distribuído de grafos. Ao longo deste trabalho, vamos... {\color{blue} 
+distribuído de grafos. Ao longo deste trabalho, vamos... {\color{blue}
 informações a serem adicionadas no futuro, com o que vamos colocar de
 fato no artigo}.
 
@@ -136,29 +136,30 @@ fato no artigo}.
 acho que é maioria usado pra rede social(?))
 
 \section{Conceitos Fundamentais}
-Nesta seção apresentamos os conceitos fundamentais para entender o 
+Nesta seção apresentamos os conceitos fundamentais para entender o
 funcionamento de bancos de dados e ferramentas de processamento de dados
 baseados em grafos, mais especificamente, em contextos distribuídos.
 
 \subsection{Graph DBMS versus Graph Analytics Systems}
+\input{gdbms_vs_gas.tex}
 %\subsection{Notação e representação de grafos (?)}
 
 \subsection{Cortes de grafos}
 O conceito de corte em grafo é importante para formalização e análise
-do particionamento de um grafo em um contexto distribuído. Para se 
-trabalhar com grafos de maneira distribuída, é necessário criar um 
-particionamento do grafo, para que cada parte seja alocada em um nó da 
-rede de computadores usada. Um particionamento precisa ser feito de 
-maneira que o processamento do grafo seja balanceado, ou seja, as 
-máquinas devem ter números de acessos similares; além disso, é 
-importante fazer com que os processamentos do grafo sejam feitos com o 
-menor número de nós de computação possível, pois o processamento que 
-envolve mais de um nó de computação necessita de maior comunicação pela 
+do particionamento de um grafo em um contexto distribuído. Para se
+trabalhar com grafos de maneira distribuída, é necessário criar um
+particionamento do grafo, para que cada parte seja alocada em um nó da
+rede de computadores usada. Um particionamento precisa ser feito de
+maneira que o processamento do grafo seja balanceado, ou seja, as
+máquinas devem ter números de acessos similares; além disso, é
+importante fazer com que os processamentos do grafo sejam feitos com o
+menor número de nós de computação possível, pois o processamento que
+envolve mais de um nó de computação necessita de maior comunicação pela
 rede, aumentando a latência da operação. Para analisar estes dois
 aspectos com maior formalismo, definimos o conceito de corte.
 
 Um corte é um particionamento em dois conjuntos disjuntos de vértices de
-um grafo. Seja $G = (V, E)$ um grafo, então um conjunto $S \subseteq V$ 
+um grafo. Seja $G = (V, E)$ um grafo, então um conjunto $S \subseteq V$
 de vértices induz o corte $(S, V \setminus S)$. Um arco $e \in E$ é
 chamada de arco do corte se ele atravessa as partes, ou seja, se
 $e = (u, v)$ com $u \in S$ e $v \notin S$, ou $u \notin S$ e $v \in S$.
@@ -170,22 +171,22 @@ figura~\ref{fig:example_cut} apresenta um exemplo de corte em um grafo.
         \includegraphics[width=.5\textwidth]{fund_conc/cut_example.pdf}
     \end{center}
     \caption{Grafo com exemplo de corte. O corte apresentado é definido
-    pelos conjuntos de vertices ${E, C}$, em azul, e $A, B, D$, em 
+    pelos conjuntos de vertices ${E, C}$, em azul, e $A, B, D$, em
     branco. Os arcos de cor vermelha são os arcos deste corte. No total,
     são 4 arcos vermelhos neste corte, ou seja, o tamanho deste corte
     é 4.}
     \label{fig:example_cut}
 \end{figure}
 
-Note que qualquer particionamento (não apenas bipartições) do conjunto 
-de vértices de um grafo pode ser realizado após recursivas aplicações de 
+Note que qualquer particionamento (não apenas bipartições) do conjunto
+de vértices de um grafo pode ser realizado após recursivas aplicações de
 cortes. Portanto, é possível construir e analisar cortes olhando apenas
-para bipartições do grafo original. Perceba também que ao fazer um 
-particionamento, podemos analisar o balanceamento de processamento 
-dos nós de computação de acordo com o número de partes (e vértices) 
+para bipartições do grafo original. Perceba também que ao fazer um
+particionamento, podemos analisar o balanceamento de processamento
+dos nós de computação de acordo com o número de partes (e vértices)
 que são alocadas aos nós de computação. Além disso, é possível analisar
 a quantidade de comunicação entre nós de acordo com a quantidade de
-arcos que conectam diferentes partes, que podem estar alocadas em dois 
+arcos que conectam diferentes partes, que podem estar alocadas em dois
 nós de computação diferentes.
 
 {\color{blue} Se formos falar de cortes baseados em arcos, é melhor
@@ -201,54 +202,54 @@ adicionar mais um pedaço de texto explicando esse tipo de corte.}
 % Quais são as principais abordagens para se fazer um particionamento?
 % particionamento online?
 O particionamento de um grafo é o processo que permite dividir um grafo
-em diferentes partes, que podem ser alocadas em diferentes máquinas, 
+em diferentes partes, que podem ser alocadas em diferentes máquinas,
 permitindo o processamento e armazenamento distribuído do grafo. Nesta
 seção, apresentaremos três diferentes abordagens de particionamento.
 A primeira, baseada no algoritmo METIS~\cite{metis}, é uma heurística
-que tenta minimizar a quantidade de arcos que conectam partes 
-diferentes; a segunda faz um particionamento aleatório; e a terceira 
+que tenta minimizar a quantidade de arcos que conectam partes
+diferentes; a segunda faz um particionamento aleatório; e a terceira
 particiona os vértices de acordo com o valor de alguns atributos destes
 vértices.
 
 \subsection{Particionamento com cortes mínimos}
 O algoritmo METIS tem como objetivo produzir um particionamento com
-$k$ partes que minimiza a quantidade de arcos atravessando partes, ou 
-seja, produz cortes minímos no grafo. O problema de encontrar tal 
-partição é chamado $k-$particionamento de um grafo, e vamos defini-lo 
-assim: dado um grafo $G = (V, E)$, com $|V| = n$, particione $V$ em $k$ 
-conjuntos $V_1, V_2, \ldots, V_k$ de maneira que 
-$V_i \cap V_j = \emptyset$ para $i \neq j$, $\bigcup_{i = 1}^k V_i = V$, 
-e $|V_i| = n / k$ para $i \in \{1, \ldots, k\}$ (sem perda de 
-generalidade, se $n$ não é divisível por $k$, então adicione nós 
-"fantasmas" até que $k | n$). O $k-$particionamento também pode ser 
-generalizado ao considerar pesos para arcos, adicionando uma informação 
-de importância ou relevância para as conexões, mas por facilidade vamos 
-considerar apenas o caso em que todos os pesos dos arcos são iguais, o 
+$k$ partes que minimiza a quantidade de arcos atravessando partes, ou
+seja, produz cortes minímos no grafo. O problema de encontrar tal
+partição é chamado $k-$particionamento de um grafo, e vamos defini-lo
+assim: dado um grafo $G = (V, E)$, com $|V| = n$, particione $V$ em $k$
+conjuntos $V_1, V_2, \ldots, V_k$ de maneira que
+$V_i \cap V_j = \emptyset$ para $i \neq j$, $\bigcup_{i = 1}^k V_i = V$,
+e $|V_i| = n / k$ para $i \in \{1, \ldots, k\}$ (sem perda de
+generalidade, se $n$ não é divisível por $k$, então adicione nós
+"fantasmas" até que $k | n$). O $k-$particionamento também pode ser
+generalizado ao considerar pesos para arcos, adicionando uma informação
+de importância ou relevância para as conexões, mas por facilidade vamos
+considerar apenas o caso em que todos os pesos dos arcos são iguais, o
 que é consistente com a definição que apresentamos. Lembre também que
 um corte em um grafo também é uma bipartição do grafo; a escolha por um
 dos nomes ao longo desta seção será feita de maneira conveniente à
 explicação dos conceitos.
 
-O $k-$particionamento possui importância em aplicações de computação 
-paralela e distribuída, e foi provado ser 
-NP-completo~\cite{graphpartitioning}, ou seja, o problema se torna 
-intratável rapidamente com o aumento da instância. Por isso, o algoritmo 
-METIS é uma heurística, ou seja, a solução produzida não é ótima em 
-geral. 
+O $k-$particionamento possui importância em aplicações de computação
+paralela e distribuída, e foi provado ser
+NP-completo~\cite{graphpartitioning}, ou seja, o problema se torna
+intratável rapidamente com o aumento da instância. Por isso, o algoritmo
+METIS é uma heurística, ou seja, a solução produzida não é ótima em
+geral.
 
 A heurística METIS resolve o problema do $k-$particionamento realizando
 aplicações recursivas de um procedimento de biparticionamento. O número
-total de chamadas recursivas feitas é no máximo $\ceil{\log x}$. O 
+total de chamadas recursivas feitas é no máximo $\ceil{\log x}$. O
 algoritmo de bipartição é também uma heurística que tenta achar o
-corte de menor custo no grafo. Como achar esta partição no grafo pode 
-tomar muito tempo, uma etapa de encolhimento é feita antes, e depois 
-disso o grafo bipartido é expandido e refinado até se obter uma 
-bipartição do grafo original. O algoritmo de biparticionamento é 
+corte de menor custo no grafo. Como achar esta partição no grafo pode
+tomar muito tempo, uma etapa de encolhimento é feita antes, e depois
+disso o grafo bipartido é expandido e refinado até se obter uma
+bipartição do grafo original. O algoritmo de biparticionamento é
 composto por três etapas:
 \begin{itemize}
-\item{encolhimento:} pares de vértices são escolhidos dois 
+\item{encolhimento:} pares de vértices são escolhidos dois
     a dois, e são acoplados em um vértice novo que reune todos os arcos
-    que estavam nos vértices antigos. Esta etapa é repetida até o 
+    que estavam nos vértices antigos. Esta etapa é repetida até o
     grafo ser considerado pequeno;
 \item{biparticionamento:} uma heurística (novamente) determina um corte
     com tamanho pequeno;
@@ -258,101 +259,101 @@ composto por três etapas:
 
 Durante o encolhimento, os vértices devem ser escolhidos dois a dois sem
 repetições, o que é equivalente a escolher um emparelhamento do grafo.
-Um emparelhamento é um conjunto de arcos de um grafo que não tem 
+Um emparelhamento é um conjunto de arcos de um grafo que não tem
 vértices em comum. O algoritmo METIS implementa uma heurística
 de emparelhamento máximo (com maior número de arcos), para escolher os
-pares de vértices para serem acoplados. A vantagem de fazer um 
+pares de vértices para serem acoplados. A vantagem de fazer um
 emparelhamento máximo durante o encolhimento é diminuir o número de
 iterações até que o grafo fique pequeno. Segundo Karypis et al., um
-grafo de tamanho 100 é pequeno o suficiente para seguir para etapa de 
+grafo de tamanho 100 é pequeno o suficiente para seguir para etapa de
 bipartição.
 % TODO: talvez adicionar uma figura de matching aqui
 
-Com o grafo encolhido, uma bipartição deve ser mais facilmente 
-encontrada. Porém, como este problema ainda é 
+Com o grafo encolhido, uma bipartição deve ser mais facilmente
+encontrada. Porém, como este problema ainda é
 NP-difícil~\cite{graphpartitioning}, uma outra heurística é usada. Esta
-heurística constrói um corte do grafo, e é um algoritmo guloso que 
-começa com um corte que contém apenas um vértice, escolhido 
-aleatóriamente, e a cada iteração aumenta o conjunto de vértices do 
-corte ao adicionar um novo vértice, até que o corte tenha metade dos 
-vértices do grafo. Em cada etapa do algoritmo, um vértice de fora do 
-corte que está conectado a um arco do corte é escolhido. Esta escolha é 
-feita de acordo com o ganho de arcos de corte que o novo vértice pode 
-adicionar (ou remover) no corte atual. Seja $S_i$ o conjunto de vértices 
-do corte da $i-$ésima iteração, então, definimos o ganho de adicionar um 
+heurística constrói um corte do grafo, e é um algoritmo guloso que
+começa com um corte que contém apenas um vértice, escolhido
+aleatóriamente, e a cada iteração aumenta o conjunto de vértices do
+corte ao adicionar um novo vértice, até que o corte tenha metade dos
+vértices do grafo. Em cada etapa do algoritmo, um vértice de fora do
+corte que está conectado a um arco do corte é escolhido. Esta escolha é
+feita de acordo com o ganho de arcos de corte que o novo vértice pode
+adicionar (ou remover) no corte atual. Seja $S_i$ o conjunto de vértices
+do corte da $i-$ésima iteração, então, definimos o ganho de adicionar um
 vértice como:
 
 \begin{equation}
-    g_v = \abs{\{u \mid (v, u) \in E, u \notin S_i\}} - 
-          \abs{\{u \mid (v, u) \in E, u \in S_i\}} 
+    g_v = \abs{\{u \mid (v, u) \in E, u \notin S_i\}} -
+          \abs{\{u \mid (v, u) \in E, u \in S_i\}}
 \end{equation}
 
-A medida $g_v$ também é útil para a última etapa do biparticionamento, 
-que ao mesmo tempo que expande o grafo colapsado, faz um refinamento do 
-biparticionamento produzido. A cada iteração desta etapa, um nó é 
-desacoplado e então todos os vértices da borda do corte do 
+A medida $g_v$ também é útil para a última etapa do biparticionamento,
+que ao mesmo tempo que expande o grafo colapsado, faz um refinamento do
+biparticionamento produzido. A cada iteração desta etapa, um nó é
+desacoplado e então todos os vértices da borda do corte do
 biparticionamento são analisados para uma possível troca de partes. Na
 prática, esta etapa é aplicada com otimizações que tornam desnecessário
 analisar todos os vértices da borda por várias iterações, tornando essa
 heurística mais eficiente.
 
-O algoritmo METIS é até hoje um dos principais algoritmos de 
-particionamento de grafos, e por isso é usado como base de comparação 
+O algoritmo METIS é até hoje um dos principais algoritmos de
+particionamento de grafos, e por isso é usado como base de comparação
 para outras propostas~\cite{baselinemetis}.
 
 
 \subsection{Particionamentos aleatórios e por intervalos}
-Um particionamento aleatório atribui partes aos vértices de maneira 
-aleatória e uniforme. Esta atribuição é feita de acordo com alguma 
+Um particionamento aleatório atribui partes aos vértices de maneira
+aleatória e uniforme. Esta atribuição é feita de acordo com alguma
 função de hash, que pode ser aplicada, por exemplo, no atributo
-de identificação do vértice. Este tipo de particionamento é facilmente 
-implementado visto que o único requisito é que uma função de hash 
+de identificação do vértice. Este tipo de particionamento é facilmente
+implementado visto que o único requisito é que uma função de hash
 distribua os vértices de maneira equilibrada entre os nós.
 
-Um particionamento por intervalo é similar, e também precisa de uma 
-função de hash, mas ao invés de atribuir partes a valores de um 
-atributo, essa função atribui partes a intervalos dos valores de 
+Um particionamento por intervalo é similar, e também precisa de uma
+função de hash, mas ao invés de atribuir partes a valores de um
+atributo, essa função atribui partes a intervalos dos valores de
 atributos. Esta abordagem é útil quando há um atributo nos vértices que
-determina a chance de relacionamento entre vértices de acordo com 
+determina a chance de relacionamento entre vértices de acordo com
 seus valores; por exemplo, se os vértices são pessoas com um atributo
-de latitude e longitude, então é razoável adimitir que os 
+de latitude e longitude, então é razoável adimitir que os
 relacionamentos (arcos) ocorrerão mais entre pessoas que tem valores
 próximos para esses atributos.
 
-Além de ser facilmente implementadais, essas estratégias precisam de 
-pouco processamento e pouco espaço de memória para identificar a qual 
-parte um vértice foi alocado. Outra vantagem desses métodos é que um 
-novo vértice do grafo pode ser atribuido para uma parte de maneira 
+Além de ser facilmente implementadais, essas estratégias precisam de
+pouco processamento e pouco espaço de memória para identificar a qual
+parte um vértice foi alocado. Outra vantagem desses métodos é que um
+novo vértice do grafo pode ser atribuido para uma parte de maneira
 rápida, diferente da abordagem de cortes mínimos.
 
 \subsection{Comparação entre abordagens de particionamento}
-Ambas abordagens apresentadas anteriormete podem ser aplicadas 
+Ambas abordagens apresentadas anteriormete podem ser aplicadas
 vantajosamente. A estratégia baseada em cortes se aproveita da estrutura
-da estrutura do problema de interesse e pode produzir um particionamento 
-que possui poucos arcos conectando duas partes, ou seja, um 
-particionamento que agrupa as entidades que se relacionam constantemente 
+da estrutura do problema de interesse e pode produzir um particionamento
+que possui poucos arcos conectando duas partes, ou seja, um
+particionamento que agrupa as entidades que se relacionam constantemente
 e, portanto, faz as consultas precisarem de menos comunicações entre
 nós de computação. No caso dos particionamentos aleatórios ou por
 intervalos, o processo de particionamento é simples de se implementar
-e necessita de pouco espaço de armazenamento. Além disso, 
+e necessita de pouco espaço de armazenamento. Além disso,
 particionamentos aleatórios podem atribuir partes a novos vértices assim
 que eles são criados.
 
-Por outro lado, ambas abordagens também possuem desvantagens. A 
-principal desvantagem do particionamento por cortes é a sua 
-complexidade, de implementação e de recuperação das partes. Além disso, 
-no particionamento baseado em cortes, uma política precisa ser definida 
-para quando um novo vértice é criado: este vértice precisa ser 
-eventualmente colocado em alguma parte, mas deve ser considerado que 
-refazer todo processo de particionamento sempre que um novo nó é criado 
+Por outro lado, ambas abordagens também possuem desvantagens. A
+principal desvantagem do particionamento por cortes é a sua
+complexidade, de implementação e de recuperação das partes. Além disso,
+no particionamento baseado em cortes, uma política precisa ser definida
+para quando um novo vértice é criado: este vértice precisa ser
+eventualmente colocado em alguma parte, mas deve ser considerado que
+refazer todo processo de particionamento sempre que um novo nó é criado
 é inviável. A desvantagem do método particionamento aleatório e não
 usar a estrutura dos dados do problema, o que pode fazer com que
-operações comuns causem um grande tráfego na rede, pois os nós 
+operações comuns causem um grande tráfego na rede, pois os nós
 fortemente relacionados não estarão disponíveis nos mesmos locais.
 
 O trabalho de Khayyat et al. mostra que, de fato, não um consenso de
 qual é a melhor alternativa de particionamento~\cite{mizan}. Portanto,
-a escolha de uma estratégia de particionamento depende da aplicação. A 
+a escolha de uma estratégia de particionamento depende da aplicação. A
 tabela~\ref{tab:partitions} apresenta os principais aspectos
 estratégias de particionamento que apresentamos nesta seção.
 
@@ -362,32 +363,32 @@ estratégias de particionamento que apresentamos nesta seção.
 \label{tab:partitions}
 \begin{tabular}{lcc}
 \hline
-& \begin{tabular}[c]{@{}c@{}}Particionamento \\ 
+& \begin{tabular}[c]{@{}c@{}}Particionamento \\
     de corte mínimo
-  \end{tabular} & 
+  \end{tabular} &
   \multicolumn{1}{c}{\begin{tabular}
-            [c]{@{}c@{}}Particionamento aleatório \\ 
+            [c]{@{}c@{}}Particionamento aleatório \\
              e por intervalo
   \end{tabular}} \\ \hline
 
 \\
 Usa estrutura do grafo & Sim & Não \\
 \\
-\rowcolor[HTML]{DFDFDF} 
-\begin{tabular}[c]{@{}l@{}}Dificuldade de cálculo \\ 
+\rowcolor[HTML]{DFDFDF}
+\begin{tabular}[c]{@{}l@{}}Dificuldade de cálculo \\
     do particionamento
 \end{tabular}  & Difícil & Fácil \\
 \\
-\begin{tabular}[c]{@{}l@{}}Necessita de armazenar\\ 
+\begin{tabular}[c]{@{}l@{}}Necessita de armazenar\\
         partes explicitamente
 \end{tabular} & Sim & Não \\
 \\
-\rowcolor[HTML]{DFDFDF} 
-    \begin{tabular}[c]{@{}l@{}}Atribuição de parte para\\ 
+\rowcolor[HTML]{DFDFDF}
+    \begin{tabular}[c]{@{}l@{}}Atribuição de parte para\\
         um novo vértice
-    \end{tabular} & \begin{tabular}[c]{@{}c@{}}Depende de criação \\ 
+    \end{tabular} & \begin{tabular}[c]{@{}c@{}}Depende de criação \\
         de política
-    \end{tabular}  & Automática                                                                                              
+    \end{tabular}  & Automática
 \\
 \end{tabular}
 \vspace{1em}
@@ -397,34 +398,34 @@ Usa estrutura do grafo & Sim & Não \\
 
 
 \section{Graph Analytics Systems}
-Com o crescimento das aplicações na internet e em outras áreas como 
-transportes e comércio, a demanda por processamento eficiente e 
-distribuído de grafos cresceu. Outros arcabouços de processamento 
+Com o crescimento das aplicações na internet e em outras áreas como
+transportes e comércio, a demanda por processamento eficiente e
+distribuído de grafos cresceu. Outros arcabouços de processamento
 distribuído com propósitos mais genéricos, como MapReduce, podem não ser
 adequados a alguns problemas de grafos. Por isso, tornou-se necessário a
-criação de arcabouços de processamento distribuído especializados em 
+criação de arcabouços de processamento distribuído especializados em
 grafos, que permitem escrever programas que fazem cálculos sobre grafos
-de maneira mais intuitiva e eficiente. Chamamos estes arcabouços de 
+de maneira mais intuitiva e eficiente. Chamamos estes arcabouços de
 {\em Graph Analytics Systems} (GASs).
 
-Uma das primeiras soluções GAS foi o sistema Pregel, criado por 
-engenheiros do Google~\cite{pregel}. Pregel possui uma abordagem de 
-processamento centrada nos vértices do grafo. Os programas deste 
-arcabouço funcionam em rodadas chamadas de {\em supersteps}; a cada 
-{\em superstep} um vértice pode receber uma mensagem, fazer uma 
-computação, enviar uma mensagem, ou decidir parar. Um programa acaba 
-quando todos os vértices decidem parar. Este método de computação também 
-é a base para outros GAS, como o Giraph~\cite{giraph}, 
-Surfer~\cite{surfer}, GoldenOrb~\cite{goldenorb} e Mizan~\cite{mizan}. 
-Estas variações do sistema Pregel normalmente se diferenciam pelo 
+Uma das primeiras soluções GAS foi o sistema Pregel, criado por
+engenheiros do Google~\cite{pregel}. Pregel possui uma abordagem de
+processamento centrada nos vértices do grafo. Os programas deste
+arcabouço funcionam em rodadas chamadas de {\em supersteps}; a cada
+{\em superstep} um vértice pode receber uma mensagem, fazer uma
+computação, enviar uma mensagem, ou decidir parar. Um programa acaba
+quando todos os vértices decidem parar. Este método de computação também
+é a base para outros GAS, como o Giraph~\cite{giraph},
+Surfer~\cite{surfer}, GoldenOrb~\cite{goldenorb} e Mizan~\cite{mizan}.
+Estas variações do sistema Pregel normalmente se diferenciam pelo
 sistema de armazenamento utilizado e também pelo tipo de particionamento
 de grafo utilizado.
 
-O sistema Pregel e suas variantes podem ainda não ser adequados para 
+O sistema Pregel e suas variantes podem ainda não ser adequados para
 algumas aplicações, principalmente aquelas em que são construídos grafos
-densos. Em um grafo denso, a quantidade de arcos pode ser muito grande, 
+densos. Em um grafo denso, a quantidade de arcos pode ser muito grande,
 criando um alto tráfego de informação localmente e também entre os nós
-de computação. Como solução para este problema o sistema Blogel foi 
+de computação. Como solução para este problema o sistema Blogel foi
 desenvolvido. Este sistema utiliza o mesmo método de processamento que o
 Pregel, porém faz cálculos centrados em blocos de vértices, evitando
 comunicação excessiva entre vértices.
@@ -439,7 +440,7 @@ comunicação excessiva entre vértices.
 \bibitem{nosqlorg} ``NoSQL Databases'', http://nosql-database.org/.
 \bibitem{neo4jcustomers} ``Neo4j Customers'', https://neo4j.com/customers/.
 \bibitem{neo4jquery} M. Hunger, R. Boyd. ``RDBMS \& Graphs: SQL vs. Cypher Query Languages'' Neo4j Blog. Mar. 2016. https://neo4j.com/blog/sql-vs-cypher-query-languages/
-\bibitem{biochem4j} N. Swainston et al., ``biochem4j: Integrated and extensible biochemical knowledge through graph databases'', PLOS ONE, vol. 12, no. 7, p. e0179130, Jul. 2017. 
+\bibitem{biochem4j} N. Swainston et al., ``biochem4j: Integrated and extensible biochemical knowledge through graph databases'', PLOS ONE, vol. 12, no. 7, p. e0179130, Jul. 2017.
 \bibitem{biomol} F. Olken, ``Graph Data Management for Molecular Biology'', OMICS: A Journal of Integrative Biology, vol. 7, no. 1, pp. 75–78, Jan. 2003.
 \bibitem{sematicweb} B. McBride, ``Jena: a semantic Web toolkit,” IEEE Internet Computing, vol. 6, no. 6, pp. 55–59, Nov. 2002.
 \bibitem{metis} Karypis, G., \& Kumar, V. (1998). ``A Fast and High Quality Multilevel Scheme for Partitioning Irregular Graphs''. SIAM Journal on Scientific Computing, 20(1), 359–392. https://doi.org/10.1137/s1064827595287997
