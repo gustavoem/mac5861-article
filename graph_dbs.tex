@@ -401,22 +401,22 @@ Com o crescimento das aplicações na internet e em outras áreas como
 transportes e comércio, a demanda por processamento eficiente e 
 distribuído de grafos cresceu. Outros arcabouços de processamento 
 distribuído com propósitos mais genéricos, como MapReduce, podem não ser
-adequados a alguns problemas de grafos. Por isso, tornou-se necessário a
-criação de arcabouços de processamento distribuído especializados em 
-grafos, que permitem escrever programas que fazem cálculos sobre grafos
-de maneira mais intuitiva e eficiente. Chamamos estes arcabouços de 
-{\em Graph Analytics Systems} (GASs).
+adequados para alguns problemas de grafos. Por isso, tornou-se
+necessário a criação de arcabouços de processamento distribuído
+especializados em grafos, que permitem escrever programas que fazem
+cálculos sobre grafos de maneira mais intuitiva e eficiente. Chamamos
+estes arcabouços de {\em Graph Analytics Systems} (GASs).
 
 Uma das primeiras soluções GAS foi o sistema Pregel, criado por 
 engenheiros do Google~\cite{pregel}. Pregel possui uma abordagem de 
 processamento centrada nos vértices do grafo. Os programas deste 
-arcabouço funcionam em rodadas chamadas de {\em supersteps}; a cada 
-{\em superstep} um vértice pode receber uma mensagem, fazer uma 
-computação, enviar uma mensagem, ou decidir parar. Um programa acaba 
-quando todos os vértices decidem parar. Este método de computação também 
-é a base para outros GAS, como o Giraph~\cite{giraph}, 
-Surfer~\cite{surfer}, GoldenOrb~\cite{goldenorb} e Mizan~\cite{mizan}. 
-Estas variações do sistema Pregel normalmente se diferenciam pelo 
+arcabouço funcionam com uma sequência de rodadas chamadas de {\em
+supersteps}; a cada {\em superstep} um vértice pode receber uma
+mensagem, fazer uma computação, enviar uma mensagem, ou decidir parar.
+Um programa acaba quando todos os vértices decidem parar. Este método de
+computação também é a base para outros GAS, como o Giraph~\cite{giraph},
+Surfer~\cite{surfer}, GoldenOrb~\cite{goldenorb} e Mizan~\cite{mizan}.
+Estas variações do sistema Pregel normalmente se diferenciam pelo
 sistema de armazenamento utilizado e também pelo tipo de particionamento
 de grafo utilizado.
 
@@ -429,9 +429,67 @@ desenvolvido. Este sistema utiliza o mesmo método de processamento que o
 Pregel, porém faz cálculos centrados em blocos de vértices, evitando
 comunicação excessiva entre vértices.
 
-\subsection{Pregel}
-% Surfer [4] utilizes min-cut graph partitioning to improve the performance of distributed vertex centric graph processing
+Vamos, nesta seção, explicar em maiores detalhes os funcionamentos dos
+arcabouços Pregel e Blogel.
 
+\subsection{Pregel}
+% Surfer [4] utilizes min-cut graph partitioning to improve the
+% performance of distributed vertex centric graph processing
+Pregel é um arcabouço criado por engenheiros do Google, para
+processamento de grafos. Este arcabouço surgiu por conta da inadequação 
+de outros arcabouços de processamento, como MapReduce, no processamento
+de grafos. Apesar de surgir como uma alternativa ao MapReduce, Pregel 
+utiliza uma ideia de sucesso do primeiro arcabouço: processamento
+particionado e local. Um programa Pregel é composto por uma sequência
+de iterações, chamadas de {\em supersteps} em que cada vértice do grafo
+faz processamentos independentes que podem compor a resposta do 
+programa.
+
+Em cada {\em superstep} um vértice pode receber uma mensagem, fazer um
+processamento, ou enviar uma mensagem (ou qualquer combinação dos três).
+Um vértice é capaz de receber uma mensagem que lhe foi enviada na
+iteração anterior, e esta mensagem normalmente é utilizada como
+argumento para algum processamento que o vértice pode ter na iteração. O
+processamento de cada vértice é determinado pelo usuário, que escreveu o
+programa no arcabouço. Além de receber uma mensagem e fazer um
+processamento, um vértice também pode enviar uma mensagem, que será
+recebida pelo destinatário na próxima iteração. Um vértice normalmente
+envia mensagens para vértices adjacentes, mas uma mensagem também pode
+ser enviada para qualquer outro vértice.
+
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.45\textwidth]{pregel/vertex_state.pdf}
+    \end{center}
+    \caption{Diagrama de estado de um vértice em um programa Pregel.}
+    \label{fig:pregel_states}
+\end{figure}
+
+
+Além fazer trocas de mensagens e processamento, um vértice também pode
+pausar. Quando isto acontece, o vértice fica em estado inativo e não faz
+nenhum tipo de processamento ou envio de mensagens; por outro lado, um
+vértice inativo pode voltar a ser ativo se ele receber uma mensagem. A
+figura~\ref{fig:pregel_states} mostra o diagrama de estados de vértices
+em um programa Pregel.  Quando todos os vértices estão em estado
+inativo, então não existe mais nenhum processamento ou comunicação a ser
+feito, logo o programa termina. A figura~\ref{fig:execution_example}
+mostra um exemplo de programa em Pregel.
+
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.45\textwidth,
+        clip]{pregel/execution_example.pdf}
+    \end{center}
+    \caption{Exemplo de execução de um programa Pregel, que encontra o
+    valor máximo dos nós de um grafo. Os nós mais escuros estão
+    inativos, enquanto os nós ativos possuem coloração mais clara. Os
+    arcos tracejados representam comunicação entre {\em supersteps},
+    enquanto os arcos sólidos representam os arcos do grafo de
+    interesse.
+    }
+    \label{fig:execution_example}
+\end{figure}
 
 \subsection{Blogel}
 
