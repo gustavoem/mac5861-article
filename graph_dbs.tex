@@ -465,7 +465,6 @@ ser enviada para qualquer outro vértice.
     \label{fig:pregel_states}
 \end{figure}
 
-
 Além fazer trocas de mensagens e processamento, um vértice também pode
 pausar. Quando isto acontece, o vértice fica em estado inativo e não faz
 nenhum tipo de processamento ou envio de mensagens; por outro lado, um
@@ -482,14 +481,30 @@ mostra um exemplo de programa em Pregel.
         clip]{pregel/execution_example.pdf}
     \end{center}
     \caption{Exemplo de execução de um programa Pregel, que encontra o
-    valor máximo dos nós de um grafo. Os nós mais escuros estão
-    inativos, enquanto os nós ativos possuem coloração mais clara. Os
-    arcos tracejados representam comunicação entre {\em supersteps},
-    enquanto os arcos sólidos representam os arcos do grafo de
-    interesse.
+    valor máximo dos vértices de um grafo. Os vértices mais escuros 
+    estão inativos, enquanto os vértices ativos possuem coloração mais 
+    clara. Os arcos tracejados representam comunicação entre {\em
+    supersteps}, enquanto os arcos sólidos representam os arcos do grafo
+    original. Em cada iteração um vértice ativo recebe o valor de um
+    vértice adjacente que estava ativo na ultima iteração. Se o valor
+    recebido por um vértice é maior do que o seu valor, então este 
+    vértice propaga o maior valor para todos os seus vértices
+    adjacentes; se o valor recebido não for maior que o seu, então o
+    vértice decide se tornar inativo.
     }
     \label{fig:execution_example}
 \end{figure}
+
+%
+% Comentar sobre as outras ferramentas baseadas em Pregel?
+%
+Após a introdução do sistema Pregel, outros sistemas similares foram
+criados. Alguns desses sistemas mudam pontualmente alguns aspectos do
+sistema Pregel, incluindo o algoritmo de particionamento utilizado.
+O sistema Pregel usa particionamento aleatório, com {\em hashing}, por
+padrão~\cite{pregel}, mas outros sistemas similares como Giraph e Surfer
+permitem o particionamento por intervalos de valores e cortes mínimos,
+respectivamente.
 
 \subsection{Blogel}
 
