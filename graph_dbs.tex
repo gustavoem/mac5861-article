@@ -410,7 +410,7 @@ Um tipo de ferramenta que possui muitas características similares a SGBDG, incl
 Neo4j é o SGBDG mais popular atualmente, de acordo com o ranking DB-Engines \cite{db_engines}. É um SGBDG nativo, centralizado, com uma versão \emph{open-source} (\emph{Community}) e uma restrita (\emph{Enterprise}). Na versão \emph{open-source}, são disponíveis a linguagem de consulta Cypher e APIs para várias linguagens de programação (.Net, Java, JavaScript, Go, e Python), além das garantias de transação similares a ACID. Na versão paga, há extensões como a implementação em um \emph{cluster}, com replicação completa do grafo para agilizar transações de consulta simultâneas, mas sem \emph{sharding} ou particionamento do grafo original. Também são oferecidas nessa versão ferramentas de \emph{backup online} e gerenciamento de acessos. Uma visão geral dessa ferramenta está na figura \ref{fig:neo4j}. O Neo4j usa do \emph{Property Graph Model}, um grafo direcionado e onde se representam os nós, arcos e propriedades de nós ou arcos, que são guardadas em três arquivos separados
 
 \begin{figure}[htbp]
-\centerline{\includegraphics[width=0.9\linewidth]{neo4j_graph_platform.jpg}}
+\centerline{\includegraphics[width=0.9\linewidth]{img/neo4j/neo4j_graph_platform.jpg}}
 \caption{Ilustração das capacidades do Neo4j, especialmente sua integração com vários tipos de usuários e suas ferramentas.}\label{fig:neo4j}
 \label{fig}
 \end{figure}
@@ -422,7 +422,7 @@ Rudimentos de \emph{ASCII-art} são usados na expressão de padrões a ser busca
 No exemplo da figura \ref{fig:neo4j2}, a query busca um nó de label Pessoa, com uma propriedade "name" tendo valor "Jennifer", que tenha uma relação de tipo WORKS\_FOR com um nó de label "Company". Desse último nó, ela retorna a propriedade "name".
 
 \begin{figure}[htbp]
-\centerline{\includegraphics[width=0.9\linewidth]{neo4j_ps2.png}}
+\centerline{\includegraphics[width=0.9\linewidth]{img/neo4j/neo4j_ps2.png}}
 \caption{Exemplo de query em Cypher}\label{fig:neo4j2}
 \label{fig}
 \end{figure}
@@ -436,13 +436,13 @@ Usado como grafo, cada nó do grafo é armazenado como um registro com um ID pr�
 Evitando criar uma nova linguagem de consulta, OrientDB implementa o SQL estendido para funcionalidades de grafos, mantendo a sintaxe \emph{SELECT-FROM-WHERE-GROUP BY} e encapsulamento de consultas, mas perdendo a cláusula \emph{HAVING}. A navegação pelas relações entre os registros do BD é feita através dos links presentes nos registros, e referenciada por \emph{dot notation}. Por exemplo, assumindo que registros da classe \emph{Employee} possuam uma propriedade \emph{city} com um link para registros dessa classe, realizar uma consulta para extrair apenas empregados de uma dada cidade é fácil como mostrado na figura \ref{fig:orientdb_ps1}. Também é possível aplicar funções sobre valores retornados (por exemplo, \emph{sum} para uma agregação), ou usar de métodos nos próprios pares chave-valor, como na figura \ref{fig:orientdb_ps2}.
 
 \begin{figure}[htbp]
-\centerline{\includegraphics[width=0.9\linewidth]{orientdb_ps1.png}}
+\centerline{\includegraphics[width=0.9\linewidth]{img/orientdb/orientdb_ps1.png}}
 \caption{Empregados na cidade de 'Rome', no OrientDB SQL.}\label{fig:orientdb_ps1}
 \label{fig}
 \end{figure}
 
 \begin{figure}[htbp]
-\centerline{\includegraphics[width=0.9\linewidth]{orientdb_ps2.png}}
+\centerline{\includegraphics[width=0.9\linewidth]{img/orientdb/orientdb_ps2.png}}
 \caption{Retornando o primeiro e último nome de cada empregado concatenados, no OrientDB SQL.}\label{fig:orientdb_ps2}
 \label{fig}
 \end{figure}
