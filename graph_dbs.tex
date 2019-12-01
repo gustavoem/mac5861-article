@@ -143,6 +143,9 @@ baseados em grafos, mais especificamente, em contextos distribuídos.
 \subsection{Graph DBMS versus Graph Analytics Systems}
 \input{gdbms_vs_gas.tex}
 %\subsection{Notação e representação de grafos (?)}
+% vértice adjacente
+% caminho mínimo
+% diâmetro de um grafo
 
 \subsection{Cortes de grafos}
 O conceito de corte em grafo é importante para formalização e análise
@@ -453,20 +456,20 @@ Com o crescimento das aplicações na internet e em outras áreas como
 transportes e comércio, a demanda por processamento eficiente e
 distribuído de grafos cresceu. Outros arcabouços de processamento
 distribuído com propósitos mais genéricos, como MapReduce, podem não ser
-adequados a alguns problemas de grafos. Por isso, tornou-se necessário a
-criação de arcabouços de processamento distribuído especializados em
-grafos, que permitem escrever programas que fazem cálculos sobre grafos
-de maneira mais intuitiva e eficiente. Chamamos estes arcabouços de
-{\em Graph Analytics Systems} (GASs).
+adequados para alguns problemas de grafos. Por isso, tornou-se
+necessário a criação de arcabouços de processamento distribuído
+especializados em grafos, que permitem escrever programas que fazem
+cálculos sobre grafos de maneira mais intuitiva e eficiente. Chamamos
+estes arcabouços de {\em Graph Analytics Systems} (GASs).
 
 Uma das primeiras soluções GAS foi o sistema Pregel, criado por
 engenheiros do Google~\cite{pregel}. Pregel possui uma abordagem de
 processamento centrada nos vértices do grafo. Os programas deste
-arcabouço funcionam em rodadas chamadas de {\em supersteps}; a cada
-{\em superstep} um vértice pode receber uma mensagem, fazer uma
-computação, enviar uma mensagem, ou decidir parar. Um programa acaba
-quando todos os vértices decidem parar. Este método de computação também
-é a base para outros GAS, como o Giraph~\cite{giraph},
+arcabouço funcionam com uma sequência de rodadas chamadas de {\em
+supersteps}; a cada {\em superstep} um vértice pode receber uma
+mensagem, fazer uma computação, enviar uma mensagem, ou decidir parar.
+Um programa acaba quando todos os vértices decidem parar. Este método de
+computação também é a base para outros GAS, como o Giraph~\cite{giraph},
 Surfer~\cite{surfer}, GoldenOrb~\cite{goldenorb} e Mizan~\cite{mizan}.
 Estas variações do sistema Pregel normalmente se diferenciam pelo
 sistema de armazenamento utilizado e também pelo tipo de particionamento
@@ -481,33 +484,203 @@ desenvolvido. Este sistema utiliza o mesmo método de processamento que o
 Pregel, porém faz cálculos centrados em blocos de vértices, evitando
 comunicação excessiva entre vértices.
 
-\subsection{Pregel}
-% Surfer [4] utilizes min-cut graph partitioning to improve the performance of distributed vertex centric graph processing
+Vamos, nesta seção, explicar em maiores detalhes os funcionamentos dos
+arcabouços Pregel e Blogel.
 
+\subsection{Pregel}
+% Surfer [4] utilizes min-cut graph partitioning to improve the
+% performance of distributed vertex centric graph processing
+Pregel é um arcabouço criado por engenheiros do Google, para
+processamento de grafos. Este arcabouço surgiu por conta da inadequação
+de outros arcabouços de processamento, como MapReduce, no processamento
+de grafos. Apesar de surgir como uma alternativa ao MapReduce, Pregel
+utiliza uma ideia de sucesso do primeiro arcabouço: processamento
+particionado e local. Um programa Pregel é composto por uma sequência
+de iterações, chamadas de {\em supersteps} em que cada vértice do grafo
+faz processamentos independentes que podem compor a resposta do
+programa.
+
+Em cada {\em superstep} um vértice pode receber uma mensagem, fazer um
+processamento, ou enviar uma mensagem (ou qualquer combinação dos três).
+Um vértice é capaz de receber uma mensagem que lhe foi enviada na
+iteração anterior, e esta mensagem normalmente é utilizada como
+argumento para algum processamento que o vértice pode ter na iteração. O
+processamento de cada vértice é determinado pelo usuário, que escreveu o
+programa no arcabouço. Além de receber uma mensagem e fazer um
+processamento, um vértice também pode enviar uma mensagem, que será
+recebida pelo destinatário na próxima iteração. Um vértice normalmente
+envia mensagens para vértices adjacentes, mas uma mensagem também pode
+ser enviada para qualquer outro vértice.
+
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.45\textwidth]{pregel/vertex_state.pdf}
+    \end{center}
+    \caption{Diagrama de estado de um vértice em um programa Pregel.}
+    \label{fig:pregel_states}
+\end{figure}
+
+Além fazer trocas de mensagens e processamento, um vértice também pode
+pausar. Quando isto acontece, o vértice fica em estado inativo e não faz
+nenhum tipo de processamento ou envio de mensagens; por outro lado, um
+vértice inativo pode voltar a ser ativo se ele receber uma mensagem. A
+figura~\ref{fig:pregel_states} mostra o diagrama de estados de vértices
+em um programa Pregel.  Quando todos os vértices estão em estado
+inativo, então não existe mais nenhum processamento ou comunicação a ser
+feito, logo o programa termina. A figura~\ref{fig:execution_example}
+mostra um exemplo de programa em Pregel.
+
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.45\textwidth,
+        clip]{pregel/execution_example.pdf}
+    \end{center}
+    \caption{Exemplo de execução de um programa Pregel, que encontra o
+    valor máximo dos vértices de um grafo. Os vértices mais escuros
+    estão inativos, enquanto os vértices ativos possuem coloração mais
+    clara. Os arcos tracejados representam comunicação entre {\em
+    supersteps}, enquanto os arcos sólidos representam os arcos do grafo
+    original. Em cada iteração um vértice ativo recebe o valor de um
+    vértice adjacente que estava ativo na ultima iteração. Se o valor
+    recebido por um vértice é maior do que o seu valor, então este
+    vértice propaga o maior valor para todos os seus vértices
+    adjacentes; se o valor recebido não for maior que o seu, então o
+    vértice decide se tornar inativo.
+    }
+    \label{fig:execution_example}
+\end{figure}
+
+%
+% Comentar sobre as outras ferramentas baseadas em Pregel?
+%
+Após a introdução do sistema Pregel, outros sistemas similares foram
+criados. Alguns desses sistemas mudam pontualmente alguns aspectos do
+sistema Pregel, incluindo o algoritmo de particionamento utilizado.
+O sistema Pregel usa particionamento aleatório, com {\em hashing}, por
+padrão~\cite{pregel}, mas outros sistemas similares como Giraph e Surfer
+permitem o particionamento por intervalos de valores e cortes mínimos,
+respectivamente.
 
 \subsection{Blogel}
+% - growing need to deal with massive graphs -> pregel.
+% -> pregel e seus clones são alternativas centradas em vértices que
+%  trouxeram grandes avanços, porém esses sistemas negligenciam
+%  características estruturais de grafos massivos da vida real.
+% -> grafos massivos da vida real podem ter a distribuição de arcos
+%  concentradas em alguns vértices ou conjuntos de vértices específicos,
+%  fazendo com que um programa Pregel tenha um desbalanço de trabalho.
+%  Além disso, grafos da vida real podem ter um diâmetro muito grande,
+%  ou seja, existem pares de vértices do grafo que estão separados por
+%  muitos arcos de distância, o que pode causar um número muito grande
+%  de iterações em um algoritmo Pregel.
+%  Para solucionar estas dificuldades, o sistema Blogel foi proposto.
+
+% -> Blogel é uma proposta block-centric
+% -> simples como Pregel
+% -> o que é bloco
+
+% -> como blogel propões resolver o problema
+
+% -> como garantir isso /\? Oras bolas, com o algoritmo de
+%  particionamento "correto"
+
+O sistema Pregel surgiu de um contexto em que as aplicações necessitavam
+processar grafos massivos, com número muito grande de vértices e
+arestas, e este sistema de fato trouxe melhorias nesta área, além de
+servir como inspiração para diversos outros sistemas similares. Apesar
+disso, a abordagem de processamento centrada em vértices proporciona um
+processamento local que negligencia a estrutura global do grafo.
+
+D. Yan et al. consideram que boa parte dos grafos massivos observados em
+aplicações reais podem ter seus arcos distribuídos de maneira não
+uniforme, concentrados em vértices ou conjuntos de vértices que são
+principais no grafo~\cite{blogel}. Este tipo de estrutura faz com que a
+divisão de trabalho no Pregel seja desequilibrada entre os nós de
+computação. Além disso, outra característica pontuada por D. Yan et al.
+é que alguns grafos de interesse podem ter diâmetro muito grande, ou
+seja, dois vértices do grafo podem estar separados por muitos arcos de
+distância. Neste caso, um algoritmo Pregel pode precisar de um número
+muito alto de iterações para que uma mensagem de um vértice alcance seu
+destinatário. Para enfrentar estas dificuldades, D. Yan et al.
+propuseram um sistema similar ao Pregel, mas que possui um processamento
+centrado em blocos de vértices.
+
+O sistema Blogel usa as mesmas ideias de processamento que o sistema
+Pregel, porém permite definir uma estrutura de bloco, que assim como os
+vértices são capazes de realizar processamentos e trocar mensagens. Um
+bloco é simplesmente um conjunto de vértices do grafo. Para que os
+problemas apontados por D. Yan et al. sejam enfrentados, é necessário
+fazer com que a estrutura de blocos agrupe vértices que se relacionam
+constantemente, evitando comunicação excessiva e desnecessária entre
+vértices.
+
+Note que escolher um conjunto de blocos para o grafo é novamente fazer
+um particionamento do grafo original, e isto pode ser feito de diversas
+maneiras. No caso do sistema Blogel, o particionamento escolhido para a
+criação dos blocos é implementado utilizando uma abordagem que agrupa
+vértices que estão próximos (a menos arcos de distância), mais
+especificamente, utilizando um diagrama de Voronoi do grafo. Um diagrama
+de Voronoi é uma estrutura que permite decompor um espaço em células
+(blocos) que estão centradas por pontos deste espaço. É importante notar
+que a noção de distância que é utilizada nesta decomposição não é
+baseada em um sistema de coordenadas para os vértices do grafo, o que
+pode ser mais comum em outras aplicações desta técnica, mas sim na noção
+de menor caminho entre dois vértices.
+
+Experimentos realizados por D. Yan et al. mostraram que, de fato, o
+sistema Blogel permite melhor desempenho quando comparado ao Pregel, no
+processamento de grafos que possuem uma distribuição não uniforme de
+arcos entre os vértices, ou que possuem um diâmetro muito grande.
 
 \begin{thebibliography}{00}
 \bibitem{nosqlorg} ``NoSQL Databases'', http://nosql-database.org/.
-\bibitem{neo4jcustomers} ``Neo4j Customers'', https://neo4j.com/customers/.
-\bibitem{neo4jquery} M. Hunger, R. Boyd. ``RDBMS \& Graphs: SQL vs. Cypher Query Languages'' Neo4j Blog. Mar. 2016. https://neo4j.com/blog/sql-vs-cypher-query-languages/
-\bibitem{biochem4j} N. Swainston et al., ``biochem4j: Integrated and extensible biochemical knowledge through graph databases'', PLOS ONE, vol. 12, no. 7, p. e0179130, Jul. 2017.
-\bibitem{biomol} F. Olken, ``Graph Data Management for Molecular Biology'', OMICS: A Journal of Integrative Biology, vol. 7, no. 1, pp. 75–78, Jan. 2003.
-\bibitem{sematicweb} B. McBride, ``Jena: a semantic Web toolkit,” IEEE Internet Computing, vol. 6, no. 6, pp. 55–59, Nov. 2002.
-\bibitem{metis} Karypis, G., \& Kumar, V. (1998). ``A Fast and High Quality Multilevel Scheme for Partitioning Irregular Graphs''. SIAM Journal on Scientific Computing, 20(1), 359–392. https://doi.org/10.1137/s1064827595287997
-\bibitem{graphpartitioning} Andreev, K., \& Racke, H. (2006). ``Balanced Graph Partitioning''. Theory of Computing Systems, 39(6), 929–939. https://doi.org/10.1007/s00224-006-1350-7
-\bibitem{baselinemetis} D. Avdiukhin, S. Pupyrev, e G. Yaroslavtsev, ``Multi-dimensional balanced graph partitioning via projected gradient descent'', Proceedings of the VLDB Endowment, vol. 12, nº 8, p. 906–919, abr. 2019.
-\bibitem{mizan} Z. Khayyat, K. Awara, A. Alonazi, H. Jamjoom, D. Williams, e P. Kalnis, ``Mizan'', in Proceedings of the 8th ACM European Conference on Computer Systems - EuroSys ’13, 2013.
-\bibitem{pregel} G. Malewicz et al., ``Pregel'', in Proceedings of the 2010 international conference on Management of data - SIGMOD ’10, 2010.
-\bibitem{giraph} Avery, Ching. ``Giraph: Large-scale graph processing infrastructure on hadoop.'' Proceedings of the Hadoop Summit. Santa Clara 11.3 (2011): 5-9.
-\bibitem{surfer} Chen, Rishan, et al. ``Improving large graph processing on partitioned graphs in the cloud.'' Proceedings of the Third ACM Symposium on Cloud Computing. ACM, 2012.
-\bibitem{goldenorb} GoldenOrb. A Cloud-based Open Source Project for MassiveScale Graph Analysis. http://goldenorbos.org/, 2012
+\bibitem{neo4jcustomers} ``Neo4j Customers'',
+    https://neo4j.com/customers/.
+\bibitem{neo4jquery} M. Hunger, R. Boyd. ``RDBMS \& Graphs: SQL vs.
+    Cypher Query Languages'' Neo4j Blog. Mar. 2016.
+        https://neo4j.com/blog/sql-vs-cypher-query-languages/
+\bibitem{biochem4j} N. Swainston et al., ``biochem4j: Integrated and
+    extensible biochemical knowledge through graph databases'', PLOS
+        ONE, vol. 12, no. 7, p. e0179130, Jul. 2017.
+\bibitem{biomol} F. Olken, ``Graph Data Management for Molecular
+    Biology'', OMICS: A Journal of Integrative Biology, vol. 7, no. 1,
+        pp. 75–78, Jan. 2003.
+\bibitem{sematicweb} B. McBride, ``Jena: a semantic Web toolkit,” IEEE
+    Internet Computing, vol. 6, no. 6, pp. 55–59, Nov. 2002.
+\bibitem{metis} Karypis, G., \& Kumar, V. (1998). ``A Fast and High
+    Quality Multilevel Scheme for Partitioning Irregular Graphs''. SIAM
+        Journal on Scientific Computing, 20(1), 359–392.
+        https://doi.org/10.1137/s1064827595287997
+\bibitem{graphpartitioning} Andreev, K., \& Racke, H. (2006). ``Balanced
+    Graph Partitioning''. Theory of Computing Systems, 39(6), 929–939.
+        https://doi.org/10.1007/s00224-006-1350-7
+\bibitem{baselinemetis} D. Avdiukhin, S. Pupyrev, e G. Yaroslavtsev,
+    ``Multi-dimensional balanced graph partitioning via projected
+        gradient descent'', Proceedings of the VLDB Endowment, vol. 12,
+        nº 8, p. 906–919, abr. 2019.
+\bibitem{mizan} Z. Khayyat, K. Awara, A. Alonazi, H. Jamjoom, D.
+    Williams, e P. Kalnis, ``Mizan'', in Proceedings of the 8th ACM
+        European Conference on Computer Systems - EuroSys ’13, 2013.
+\bibitem{pregel} G. Malewicz et al., ``Pregel'', in Proceedings of the
+    2010 international conference on Management of data - SIGMOD ’10,
+        2010.
+\bibitem{giraph} Avery, Ching. ``Giraph: Large-scale graph processing
+    infrastructure on hadoop.'' Proceedings of the Hadoop Summit. Santa
+        Clara 11.3 (2011): 5-9.
+\bibitem{surfer} Chen, Rishan, et al. ``Improving large graph processing
+    on partitioned graphs in the cloud.'' Proceedings of the Third ACM
+        Symposium on Cloud Computing. ACM, 2012.
+\bibitem{goldenorb} GoldenOrb. A Cloud-based Open Source Project for
+    MassiveScale Graph Analysis. http://goldenorbos.org/, 2012
+\bibitem{blogel} D. Yan, J. Cheng, Y. Lu, e W. Ng, ``Blogel'',
+    Proceedings of the VLDB Endowment, vol. 7, nº 14, p. 1981–1992, out.
+        2014.
+
 \bibitem{sahu} Sahu, Siddhartha et al. ``The Ubiquity of Large Graphs and Surprising Challenges of Graph Processing: Extended Survey'' The VLDB Journal (2019): n. pag. Crossref. Web.
 \bibitem{horton} M. Sarwat, S. Elnikety, Y. He, and M. F. Mokbel, ``Horton+: A Distributed System for Processing Declarative Reachability Queries over Partitioned Graphs'', PVLDB, vol. 6, no. 14, pp. 1918–1929, 2013.
 \bibitem{thingspan} ``ThingSpan'' [Online]. Available: http://www.objectivity.com/products/thingspan/.
 \bibitem{nole-sartiani} {\color{red} preciso pegar essa referencia certinha} M. Nolé, C. Sartiani, ``Graph Management Systems: A Survey''
 \bibitem{neo4j} {\color{red} preciso pegar essa referencia certinha}
 \bibitem{janusgraph} {\color{red} preciso pegar essa referencia certinha}
-
 \end{thebibliography}
 \end{document}
