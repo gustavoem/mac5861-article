@@ -1,10 +1,50 @@
 
-Para obter os benefícios de um modelo de dados baseado em grafos, é de interesse usar de ferramentas que melhor aproximam esse comportamento. Detalhes adicionais como propriedades, \emph{labels}, direção dos arcos e significados semânticos podem ser usados em modelos mais específicos, como RDF, hipergrafos ou grafos com propriedades. Existem duas categorias de Bancos de Dados de Grafos que são de grande interesse e uso atualmente: \emph{Graph DBMS} e \emph{Graph Analytics Systems}.
+Para obter os benefícios de um modelo de dados baseado em grafos, é de
+interesse usar de ferramentas que melhor aproximam esse comportamento. Detalhes
+adicionais como propriedades, \emph{labels}, direção dos arcos e significados
+semânticos podem ser usados em modelos mais específicos, como RDF, hipergrafos
+ou grafos com propriedades. Existem duas categorias de Bancos de Dados de
+Grafos que são de grande interesse e uso atualmente:
+\emph{SGBD de Grafos} e \emph{Graph Analytics Systems}.
 
-\emph{Sistemas de Bancos de Dados de Grafos} enfatizam armazenamento persistente e garantias transacionais em um ambiente multi-usuário, com esquema flexível e tipicamente com uma linguagem própria de consulta, que permita expressar transações depedentes da estrutura do grafo apropriadamente. A independência lógica e física entre os dados é conquistada pela adoção de um modelo de alto nível do grafo, por exemplo um grafo com propriedades, aliado a uma separação do armazenamento físico. Esses modelos podem ser classificados como nativos (ou seja, com armazenamento também em formato de grafo) ou não-nativo (usando de outra forma de armazenamento, por exemplo documentos). Exemplos incluem Neo4j, OrientDB, ArangoDB, Gaffer, SAP Hana Graph, e JanusGraph.
+\emph{Sistemas de Bancos de Dados de Grafos} enfatizam armazenamento
+persistente e garantias transacionais em um ambiente multi-usuário, com esquema
+flexível e tipicamente com uma linguagem própria de consulta, que permita
+expressar transações depedentes da estrutura do grafo apropriadamente. A
+independência lógica e física entre os dados é conquistada pela adoção de um
+modelo de alto nível do grafo, por exemplo um grafo com propriedades, aliado a
+uma separação do armazenamento físico. Esses modelos podem ser classificados
+como nativos (ou seja, com armazenamento também em formato de grafo) ou
+não-nativos (usando de outra forma de armazenamento, por exemplo documentos).
+Exemplos incluem Neo4j, OrientDB, ArangoDB, Gaffer, SAP Hana Graph, e JanusGraph.
 
-\emph{Graph Analytics Systems} ou \emph{Graph Processing Frameworks} focam-se principalmente em tarefas analíticas sobre grandes grafos, com tolerância a falhas e processamento distribuído. Essas tarefas podem demorar horas e ser realizadas sobre um largo \emph{cluster}, como por exemplo um algoritmo de \emph{PageRank} ou centralidade. São adotados processamentos assíncronos e distribuídos, e se busca reduzir o I/O do cluster, no qual assume-se que não haja recursos compartilhados e qualquer transmissão de dados ou informações gerará um custo. Exemplos desse tipo de ferramenta incluem Pregel, Blogel, Apache Giraph e Gradoop.
+\emph{Graph Analytics Systems} ou \emph{Graph Processing Frameworks} focam-se
+principalmente em tarefas analíticas sobre grandes grafos, com tolerância a
+falhas e processamento distribuído. Essas tarefas podem demorar horas e ser
+realizadas sobre um largo \emph{cluster}, como por exemplo um algoritmo de
+\emph{PageRank} ou centralidade. São adotados processamentos assíncronos e
+distribuídos, e se busca reduzir o I/O do cluster, no qual assume-se que não
+haja recursos compartilhados e qualquer transmissão de dados ou informações
+gerará um custo. Exemplos desse tipo de ferramenta incluem Pregel, Blogel,
+Apache Giraph e Gradoop.
 
-A principal diferença entre essas duas classes de ferramentas é no tipo de transação a que dão mais importância e, por outro lado, onde perdas são mais aceitáveis. GDBMS focam-se na garantia de transações de \emph{update}, afetando tipicamente apenas uma porção pequena do grafo, e pagam o custo em tempo e eficiência para essa garantia. GAS, por outro lado, focam-se em tarefas de processamento do grafo inteiro, tipicamente em ambientes distribuídos, adotando perdas de qualidade próximas a outras ferramentas NoSQL.
+A principal diferença entre essas duas classes de ferramentas é no tipo de
+transação a que dão mais importância e, por outro lado, onde perdas são mais
+aceitáveis. GDBMS focam-se na garantia de transações de \emph{update}, afetando
+tipicamente apenas uma porção pequena do grafo, e pagam o custo em tempo e
+eficiência para essa garantia. GAS, por outro lado, focam-se em tarefas de
+processamento do grafo inteiro, tipicamente em ambientes distribuídos, adotando
+perdas de qualidade próximas a outras ferramentas NoSQL.
 
-Uma pesquisa recente entre pesquisadores e usuários dessas ferramentas \cite{sahu} aponta várias questões interessantes sobre seu uso. Primeiramente, muitos usuários reportam grafos muito grandes, da ordem de milhões de nós e bilhões de arcos, mesmo em organizações de tamanho médio. Entre pesquisadores há bastante espaço para o uso de GAS, enquanto que para outros usuários (por exemplo, na indústria e outras aplicações) é muito mais comum a preferência por GDBMS, enquanto que GAS não são muito aplicados. Além disso, entre usuários da indústria é notável a modelagem como grafos de entidades tradicionalmente usadas em RDBMS, como a tríade \emph{produto-pedido-transação}. Isso aponta para o valor de análises realizadas primariamente nas conexões entre tais entidades, possivelmente complementar às análises relacionais
+Uma pesquisa recente entre pesquisadores e usuários dessas ferramentas
+\cite{sahu} aponta várias questões interessantes sobre seu uso. Primeiramente,
+muitos usuários reportam grafos muito grandes, da ordem de milhões de nós e
+bilhões de arcos, mesmo em organizações de tamanho médio. Entre pesquisadores
+há bastante espaço para o uso de GAS, enquanto que para outros usuários
+(por exemplo, na indústria e outras aplicações) é muito mais comum a
+preferência por GDBMS, enquanto que GAS não são muito aplicados. Além disso,
+entre usuários da indústria é notável a modelagem como grafos de entidades
+tradicionalmente usadas em RDBMS, como a tríade
+{\ttfamily produto-pedido-transação}. Isso aponta para o valor de análises
+realizadas primariamente nas conexões entre tais entidades, possivelmente
+complementar às análises relacionais

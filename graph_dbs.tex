@@ -97,7 +97,8 @@ tipo de entidade modelada, e também um conjunto de propriedades em
 formato chave-valor, capaz de armazenar atributos da entidade. Além
 disso, os arcos do modelo também podem receber rótulos que identificam
 o tipo de relacionamento que é modelado, e um conjunto de propriedades
-que representam atributos do relacionamento.
+que representam atributos do relacionamento. Esse paradigma é chamado de
+\emph{Property Graph}.
 
 Bancos de dados baseados em grafos costumam ser aplicados em contextos
 em que os dados de interesse possuem relacionamentos complexos ou
@@ -126,9 +127,9 @@ uma rede.
 Neste artigo, nosso principal objetivo é apresentar os conceitos
 fundamentais e as principais soluções para implementar bancos de dados
 baseados em grafos distribuídos, e também sistemas para o processamento
-distribuído de grafos. Ao longo deste trabalho, vamos... {\color{blue}
-informações a serem adicionadas no futuro, com o que vamos colocar de
-fato no artigo}.
+distribuído de grafos. Ao longo deste trabalho, vamos identificar as diferenças
+entre essas duas classes de ferramentas e apresentar os contextos em que cada
+uma é melhor aplicável.
 
 \section{Metodologia}
 - Como escolhemos os artigos que lemos para criar esse artigo?
@@ -140,8 +141,58 @@ Nesta seção apresentamos os conceitos fundamentais para entender o
 funcionamento de bancos de dados e ferramentas de processamento de dados
 baseados em grafos, mais especificamente, em contextos distribuídos.
 
-\subsection{Graph DBMS versus Graph Analytics Systems}
-\input{gdbms_vs_gas.tex}
+\subsection{SGBD de Grafo versus Graph Analytics Systems}
+
+Para obter os benefícios de um modelo de dados baseado em grafos, é de
+interesse usar de ferramentas que melhor aproximam esse comportamento. Detalhes
+adicionais como propriedades, \emph{labels}, direção dos arcos e significados
+semânticos podem ser usados em modelos mais específicos, como RDF, hipergrafos
+ou grafos com propriedades. Existem duas categorias de Bancos de Dados de
+Grafos que são de grande interesse e uso atualmente:
+\emph{SGBD de Grafos} e \emph{Graph Analytics Systems}.
+
+\emph{Sistemas de Bancos de Dados de Grafos} enfatizam armazenamento
+persistente e garantias transacionais em um ambiente multi-usuário, com esquema
+flexível e tipicamente com uma linguagem própria de consulta, que permita
+expressar transações depedentes da estrutura do grafo apropriadamente. A
+independência lógica e física entre os dados é conquistada pela adoção de um
+modelo de alto nível do grafo, por exemplo um grafo com propriedades, aliado a
+uma separação do armazenamento físico. Esses modelos podem ser classificados
+como nativos (ou seja, com armazenamento também em formato de grafo) ou
+não-nativos (usando de outra forma de armazenamento, por exemplo documentos).
+Exemplos incluem Neo4j, OrientDB, ArangoDB, Gaffer, SAP Hana Graph, e JanusGraph.
+
+\emph{Graph Analytics Systems} ou \emph{Graph Processing Frameworks} focam-se
+principalmente em tarefas analíticas sobre grandes grafos, com tolerância a
+falhas e processamento distribuído. Essas tarefas podem demorar horas e ser
+realizadas sobre um largo \emph{cluster}, como por exemplo um algoritmo de
+\emph{PageRank} ou centralidade. São adotados processamentos assíncronos e
+distribuídos, e se busca reduzir o I/O do cluster, no qual assume-se que não
+haja recursos compartilhados e qualquer transmissão de dados ou informações
+gerará um custo. Exemplos desse tipo de ferramenta incluem Pregel, Blogel,
+Apache Giraph e Gradoop.
+
+A principal diferença entre essas duas classes de ferramentas é no tipo de
+transação a que dão mais importância e, por outro lado, onde perdas são mais
+aceitáveis. GDBMS focam-se na garantia de transações de \emph{update}, afetando
+tipicamente apenas uma porção pequena do grafo, e pagam o custo em tempo e
+eficiência para essa garantia. GAS, por outro lado, focam-se em tarefas de
+processamento do grafo inteiro, tipicamente em ambientes distribuídos, adotando
+perdas de qualidade próximas a outras ferramentas NoSQL.
+
+Uma pesquisa recente entre pesquisadores e usuários dessas ferramentas
+\cite{sahu} aponta várias questões interessantes sobre seu uso. Primeiramente,
+muitos usuários reportam grafos muito grandes, da ordem de milhões de nós e
+bilhões de arcos, mesmo em organizações de tamanho médio. Entre pesquisadores
+há bastante espaço para o uso de GAS, enquanto que para outros usuários
+(por exemplo, na indústria e outras aplicações) é muito mais comum a
+preferência por GDBMS, enquanto que GAS não são muito aplicados. Além disso,
+entre usuários da indústria é notável a modelagem como grafos de entidades
+tradicionalmente usadas em RDBMS, como a tríade
+{\ttfamily produto-pedido-transação}. Isso aponta para o valor de análises
+realizadas primariamente nas conexões entre tais entidades, possivelmente
+complementar às análises relacionais
+
 %\subsection{Notação e representação de grafos (?)}
 % vértice adjacente
 % caminho mínimo
@@ -657,6 +708,16 @@ sistema Blogel permite melhor desempenho quando comparado ao Pregel, no
 processamento de grafos que possuem uma distribuição não uniforme de
 arcos entre os vértices, ou que possuem um diâmetro muito grande.
 
+\section{Conclusão}
+
+A representação de grandes coleções de dados como grafos é um desafio para aplicações modernas que, chegando a bilhões de nós e arcos, não podem mais ser limitadas em seu escopo às capacidades de um só servidor, necessitando de soluções distribuídas. Nesse trabalho buscamos elencar e comparar diversas soluções a esse desafio, de forma que um usuário possa identificar qual melhor se aplica a sua necessidade específica.
+
+Sistemas Gerenciadores de Bancos de Dados de Grafos são uma solução robusta, mantendo as melhores qualidades dos Bancos de Dados Relacionais, estentidas com a capacidade de alavancar a estrutura do grafo na recuperação de consultas. Entretanto, essas ferramentas são raramente preparadas para um ambiente realmente distribuído, e a transição para esse paradigma causa perdas em expressividade e clareza na comunicação, o que leva a dificuldade de aceitação por parte dos usuários.
+
+\emph{Graph Analytics Systems} contrapõem-se a SGBDGs ao instrumentalizar a distribuição dos dados como primeira prioridade, construindo a estrutura do grafo e suas relações como mecanismos a auxiliar o processamento. Dessa forma, as tarefas distribuídas podem ser mais eficientemente resolvidas, através da implementação de algoritmos feitos especificamente para cada tarefa. Por outro lado, essas ferramentas não possuem uma construção direta do grafo, o que limita os usos possíveis e estabelece mais barreiras à compreensão do usuário.
+
+Assim, é crucial que o usuário que vá representar um grafo em um ambiente distribuído conheça bem seus dados, suas capacidades e suas necessidades, de forma a identificar a melhor solução a ser implementada.
+
 \begin{thebibliography}{00}
 \bibitem{nosqlorg} ``NoSQL Databases'', http://nosql-database.org/.
 \bibitem{neo4jcustomers} ``Neo4j Customers'',
@@ -702,14 +763,15 @@ arcos entre os vértices, ou que possuem um diâmetro muito grande.
         2014.
 
 \bibitem{sahu} Sahu, Siddhartha et al. ``The Ubiquity of Large Graphs and Surprising Challenges of Graph Processing: Extended Survey'' The VLDB Journal (2019): n. pag. Crossref. Web.
-\bibitem{nole-sartiani} {\color{red} preciso pegar essa referencia certinha} M. Nolé, C. Sartiani, ``Graph Management Systems: A Survey''
+\bibitem{nole-sartiani} M. Nolè, C. Sartiani. (2018). Graph management systems: A survey (review paper). Journal of Theoretical and Applied Information Technology. 96. 6738-6750.
 \bibitem{neo4j} ``The Neo4j Getting Started Guide v3.5'',
     https://neo4j.com/docs/getting-started/current/
 \bibitem{orientdb} ``OrientDB Manual - version 3.0.14'',
     https://orientdb.org/docs/3.0.x/
 \bibitem{tinkerpop} ``Apache TinkerPop'',
     http://tinkerpop.apache.org/
-\bibitem{janusgraph} {\color{red} preciso pegar essa referencia certinha}
+\bibitem{janusgraph} ``JanusGraph'',
+     https://docs.janusgraph.org/
 \bibitem{horton} M. Sarwat, S. Elnikety, Y. He, and M. F. Mokbel, ``Horton+: A Distributed System for Processing Declarative Reachability Queries over Partitioned Graphs'', PVLDB, vol. 6, no. 14, pp. 1918–1929, 2013.
 \bibitem{thingspan} ``ThingSpan'' [Online]. Available: http://www.objectivity.com/products/thingspan/.
 \end{thebibliography}
