@@ -42,7 +42,15 @@ hector@ime.usp.br}
 \maketitle
 
 \begin{abstract}
-    V{\color{blue}amos fazer este por último...}
+    % V{\color{blue}amos fazer este por último...}
+    A necessidade de armazenamento e processamento de grandes grafos
+    ultrapassa as capacidades de uma só máquina, requerindo uma solução
+    distribuída. Nesse trabalho, apresentamos alguns exemplos de duas classes
+    de soluções a esse desafio, Sistemas Gerenciadores de Bancos de Dados de
+    Grafos distribuídos e \emph{Graph Analytics Systems}, e exploramos as
+    diferenças entre essas soluções, em específico como lidam com a manutenção
+    da lógica do grafo e realizam consultas e algoritmos sobre uma fonte de
+    dados distribuída.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -243,8 +251,8 @@ a quantidade de comunicação entre nós de acordo com a quantidade de
 arcos que conectam diferentes partes, que podem estar alocadas em dois
 nós de computação diferentes.
 
-{\color{blue} Se formos falar de cortes baseados em arcos, é melhor
-adicionar mais um pedaço de texto explicando esse tipo de corte.}
+% {\color{blue} Se formos falar de cortes baseados em arcos, é melhor
+% adicionar mais um pedaço de texto explicando esse tipo de corte.}
 
 \section{Particionamento de grafos}
 % por que é importante?
@@ -374,19 +382,19 @@ de latitude e longitude, então é razoável adimitir que os
 relacionamentos (arcos) ocorrerão mais entre pessoas que tem valores
 próximos para esses atributos.
 
-Além de ser facilmente implementadais, essas estratégias precisam de
+Além de ser facilmente implementadas, essas estratégias precisam de
 pouco processamento e pouco espaço de memória para identificar a qual
 parte um vértice foi alocado. Outra vantagem desses métodos é que um
 novo vértice do grafo pode ser atribuido para uma parte de maneira
 rápida, diferente da abordagem de cortes mínimos.
 
 \subsection{Comparação entre abordagens de particionamento}
-Ambas abordagens apresentadas anteriormete podem ser aplicadas
+Ambas abordagens apresentadas anteriormente podem ser aplicadas
 vantajosamente. A estratégia baseada em cortes se aproveita da estrutura
-da estrutura do problema de interesse e pode produzir um particionamento
+do problema de interesse e pode produzir um particionamento
 que possui poucos arcos conectando duas partes, ou seja, um
 particionamento que agrupa as entidades que se relacionam constantemente
-e, portanto, faz as consultas precisarem de menos comunicações entre
+e, portanto, faz as consultas precisarem de menos comunicação entre
 nós de computação. No caso dos particionamentos aleatórios ou por
 intervalos, o processo de particionamento é simples de se implementar
 e necessita de pouco espaço de armazenamento. Além disso,
@@ -400,15 +408,15 @@ no particionamento baseado em cortes, uma política precisa ser definida
 para quando um novo vértice é criado: este vértice precisa ser
 eventualmente colocado em alguma parte, mas deve ser considerado que
 refazer todo processo de particionamento sempre que um novo nó é criado
-é inviável. A desvantagem do método particionamento aleatório e não
+é inviável. A desvantagem do método particionamento aleatório é não
 usar a estrutura dos dados do problema, o que pode fazer com que
 operações comuns causem um grande tráfego na rede, pois os nós
 fortemente relacionados não estarão disponíveis nos mesmos locais.
 
-O trabalho de Khayyat et al. mostra que, de fato, não um consenso de
+O trabalho de Khayyat et al. mostra que, de fato, não há um consenso de
 qual é a melhor alternativa de particionamento~\cite{mizan}. Portanto,
 a escolha de uma estratégia de particionamento depende da aplicação. A
-tabela~\ref{tab:partitions} apresenta os principais aspectos
+tabela~\ref{tab:partitions} apresenta os principais aspectos das
 estratégias de particionamento que apresentamos nesta seção.
 
 \begin{table}[]
@@ -450,82 +458,216 @@ Usa estrutura do grafo & Sim & Não \\
 
 \section{Sistemas Gerenciadores de Bancos de Dados em Grafos}
 
-Os Sistemas Gerenciadores de Bancos de Dados em Grafos, a seguir referenciados como SGBDG, são as ferramentas que focam-se em manter todas as garantias de um SGBDR, mas usando de uma representação de dados voltada a Grafos ao invés de Relações. Portanto, essas ferramentas são focadas em tarefas OLTP, com acesso de baixa latência a pequenas partes do grafo, e trazem vantagens como garantia de persistência e otimização de \emph{queries} \cite{nole-sartiani}. Muitos sistemas desse tipo são centralizados, como por exemplo Neo4j~\cite{neo4j} e OrientDB~\cite{orientdb}, que entretanto oferecem replicação como uma solução para fornecer alta disponibilidade para consultas de leitura, mas já estamos vendo o surgimento e popularização de sistemas distribuídos, como JanusGraph~\cite{janusgraph}, Horton+ \cite{horton} e ThingSpan~\cite{thingspan}. Esses últimos são tipicamente construídos sobre um \emph{backend} distribuído, como Apache Hadoop ou Cassandra, visando a construção de um sistema em que os servidores do \emph{cluster} não compartilham nenhum recurso, e o sistema então se ocupa da tarefa de comunicação interna.
+Os Sistemas Gerenciadores de Bancos de Dados em Grafos, a seguir referenciados
+como SGBDG, são as ferramentas que focam-se em manter todas as garantias de um
+SGBDR (Sistemas Gerenciadores de Bancos de Dados Relacionais), mas usando de
+uma representação de dados voltada a Grafos ao invés de
+Relações. Portanto, essas ferramentas são focadas em tarefas OLTP (
+\emph{Online Transaction Processing}, ou Processamento de Transações em Tempo
+Real), com acesso
+de baixa latência a pequenas partes do grafo, e trazem vantagens como garantia
+de persistência e otimização de \emph{queries} \cite{nole-sartiani}. Muitos
+sistemas desse tipo são centralizados, como por exemplo Neo4j~\cite{neo4j} e
+OrientDB~\cite{orientdb}, que entretanto oferecem replicação como uma solução
+para fornecer alta disponibilidade para consultas de leitura, mas já estamos
+vendo o surgimento e popularização de sistemas distribuídos, como
+JanusGraph~\cite{janusgraph}, Horton+ \cite{horton} e
+ThingSpan~\cite{thingspan}. Esses últimos são tipicamente construídos sobre um
+\emph{backend} distribuído, como Apache Hadoop ou Cassandra, visando a
+construção de um sistema em que os servidores do \emph{cluster} não
+compartilham nenhum recurso, e o sistema então se ocupa da tarefa de
+comunicação interna.
 
-Todas essas ferramentas implementam alguma forma de consulta aos dados. Várias possuem sua própria linguagem de consulta declarativa, como a Cypher do Neo4j, uma linguagem de checagem sobre todo o grafo, como a Gremlin da Apache TinkerPop usada no JanusGraph e OrientDB, ou mesmo uma extensão da SQL que permita a expressão de transversais no grafo, como está disponível no OrientDB. Também é muito comum que sejam disponibilizadas APIs para processamento de transações e processamento de tarefas. A maioria dessas linguagens não possui interpretação semântica nativa, a exceção sendo SPARQL, uma linguagem montada para a consulta de bancos de dados de RDF, que por vezes é disponibilizada nas ferramentas aqui apresentadas.
+Todas essas ferramentas implementam alguma forma de consulta aos dados. Várias
+possuem sua própria linguagem de consulta declarativa, como a Cypher do Neo4j,
+uma linguagem de checagem sobre todo o grafo, como a Gremlin da Apache
+TinkerPop usada no JanusGraph e OrientDB, ou mesmo uma extensão da SQL que
+permita a expressão de transversais no grafo, como está disponível no OrientDB.
+Também é muito comum que sejam disponibilizadas APIs para processamento de
+transações e processamento de tarefas. A maioria dessas linguagens não possui
+interpretação semântica nativa, a exceção sendo SPARQL, uma linguagem montada
+para a consulta de bancos de dados de RDF, que por vezes é disponibilizada nas
+ferramentas aqui apresentadas.
 
-Um tipo de ferramenta que possui muitas características similares a SGBDG, incluindo conexões diretas entre itens de dados e uma linguagem própria de consulta, são os bancos de dados de RDF (\emph{Resource Description Framework}), com a linguagem SPARQL. Cada item de RDF é uma relação entre duas entidades também presentes no BD, então a tradução dessa relação como um arco entre nós representantes das entidades é natural, o que aproxima tais tipos de ferramentas. Inclusive, muitas ferramentas de SGBDG permitem que um usuário traduza uma consulta SPARQL em uma na linguagem própria da ferramenta, potencializando o conhecimento acumulado em SPARQL e a expressividade semântica dessa linguagem. Entretanto, essas ferramentas estão fora do escopo do presente trabalho.
+Um tipo de ferramenta que possui muitas características similares a SGBDG,
+incluindo conexões diretas entre itens de dados e uma linguagem própria de
+consulta, são os bancos de dados de RDF (\emph{Resource Description Framework}),
+com a linguagem SPARQL. Cada item de RDF é uma relação entre duas entidades
+também presentes no BD, então a tradução dessa relação como um arco entre nós
+representantes das entidades é natural, o que aproxima tais tipos de
+ferramentas. Inclusive, muitas ferramentas de SGBDG permitem que um usuário
+traduza uma consulta SPARQL em uma na linguagem própria da ferramenta,
+potencializando o conhecimento acumulado em SPARQL e a expressividade
+semântica dessa linguagem. Entretanto, essas ferramentas estão fora do escopo
+do presente trabalho.
 
 \subsection{Neo4j}
 
-Neo4j~\cite{neo4j} é o SGBDG mais popular atualmente, de acordo com o ranking DB-Engines \cite{db_engines}. É um SGBDG nativo, centralizado, com uma versão \emph{open-source} (\emph{Community}) e uma restrita (\emph{Enterprise}). Na versão \emph{open-source}, são disponíveis a linguagem de consulta Cypher e APIs para várias linguagens de programação (.Net, Java, JavaScript, Go, e Python), além das garantias de transação similares a ACID. Na versão paga, há extensões como a implementação em um \emph{cluster}, com replicação completa do grafo para agilizar transações de consulta simultâneas, mas sem \emph{sharding} ou particionamento do grafo original. Também são oferecidas nessa versão ferramentas de \emph{backup online} e gerenciamento de acessos. Uma visão geral dessa ferramenta está na figura \ref{fig:neo4j}. O Neo4j usa do \emph{Property Graph Model}, um grafo direcionado e onde se representam os nós, arcos e propriedades de nós ou arcos, que são guardadas em três arquivos separados
+Neo4j~\cite{neo4j} é o SGBDG mais popular atualmente, de acordo com o ranking
+DB-Engines \cite{db_engines}. É um SGBDG nativo, centralizado, com uma versão
+\emph{open-source} (\emph{Community}) e uma restrita (\emph{Enterprise}). Na
+versão \emph{open-source}, são disponíveis a linguagem de consulta Cypher e
+APIs para várias linguagens de programação (.Net, Java, JavaScript, Go, e
+Python), além das garantias de transação similares a ACID. Na versão paga, há
+extensões como a implementação em um \emph{cluster}, com replicação completa
+do grafo para agilizar transações de consulta simultâneas, mas sem
+\emph{sharding} ou particionamento do grafo original. Também são oferecidas
+nessa versão ferramentas de \emph{backup online} e gerenciamento de acessos.
+Uma visão geral dessa ferramenta está na figura \ref{fig:neo4j}
+\footnote{https://neo4j.com/developer/graph-platform/}. O Neo4j usa
+do \emph{Property Graph Model}, um grafo direcionado e onde se representam os
+nós, arcos e propriedades de nós ou arcos, que são guardadas em três arquivos
+separados.
 
 \begin{figure}[htbp]
-\centerline{\includegraphics[width=0.9\linewidth]{img/neo4j/neo4j_graph_platform.jpg}}
-\caption{Ilustração das capacidades do Neo4j, especialmente sua integração com vários tipos de usuários e suas ferramentas.}\label{fig:neo4j}
+\centerline{\includegraphics[width=0.9\linewidth]{neo4j/neo4j_graph_platform.jpg}}
+\caption{Ilustração das capacidades do Neo4j, especialmente sua integração com
+  vários tipos de usuários e suas ferramentas.}\label{fig:neo4j}
 \label{fig}
 \end{figure}
 
-A linguagem Cypher é declarativa, inspirada no SQL e estendida visando a expressão de estruturas do grafo a serem procuradas. Essa linguagem se baseia numa sintaxe com as cláusulas \emph{START-SELECT-WHERE-RETURN}. \emph{START}, opcional, declara um nó específico de onde iniciar a transversal. \emph{SELECT} define o padrão a ser buscado, tipicamente em nós e as relações entre eles. \emph{WHERE} permite a filtragem a partir de propriedades e outras comparações. \emph{RETURN} aponta que informações devem ser retornadas, inclusive permitindo funções de agregação.
+A linguagem Cypher é declarativa, inspirada no SQL e estendida visando a
+expressão de estruturas do grafo a serem procuradas. Essa linguagem se baseia
+numa sintaxe com as cláusulas \emph{START-SELECT-WHERE-RETURN}. \emph{START},
+opcional, declara um nó específico de onde iniciar a transversal. \emph{SELECT}
+define o padrão a ser buscado, tipicamente em nós e as relações entre eles.
+\emph{WHERE} permite a filtragem a partir de propriedades e outras comparações.
+\emph{RETURN} aponta que informações devem ser retornadas, inclusive permitindo
+funções de agregação.
 
-Rudimentos de \emph{ASCII-art} são usados na expressão de padrões a ser buscados pela cláusula \emph{SELECT}, com nós do grafo representados por parênteses $()$ e arcos representados por dois traços $--$, possivelmente com uma direção especificada $-->$ ou $<--$. Essas estruturas podem ser melhor especificadas usando de tipos e \emph{labels} para relações e nós respectivamente, e de propriedades dessas entidades. O otimizador de query sabe usar dessas especificações para limitar o escopo das transversais sobre o grafo, agilizando as consultas apropriadamente. Cada entidade da expressão pode receber uma variável local, que é então usada nas cláusulas \emph{WHERE} e \emph{RETURN} para o tratamento dos dados retornados.
+Rudimentos de \emph{ASCII-art} são usados na expressão de padrões a ser
+buscados pela cláusula \emph{SELECT}, com nós do grafo representados por
+parênteses $()$ e arcos representados por dois traços {\ttfamily--},
+possivelmente com uma direção especificada {\ttfamily -->} ou {\ttfamily <--}.
+Essas estruturas podem ser melhor especificadas usando de tipos e \emph{labels}
+para relações e nós respectivamente, e de propriedades dessas entidades. O
+otimizador de query sabe usar dessas especificações para limitar o escopo das
+transversais sobre o grafo, agilizando as consultas apropriadamente. Cada
+entidade da expressão pode receber uma variável local, que é então usada nas
+cláusulas \emph{WHERE} e \emph{RETURN} para o tratamento dos dados retornados.
 
-No exemplo da figura \ref{fig:neo4j2}, a query busca um nó de label Pessoa, com uma propriedade "name" tendo valor "Jennifer", que tenha uma relação de tipo WORKS\_FOR com um nó de label "Company". Desse último nó, ela retorna a propriedade "name".
+No exemplo da figura \ref{fig:neo4j2}, a query busca um nó de label Pessoa,
+com uma propriedade "name" tendo valor "Jennifer", que tenha uma relação de
+tipo WORKS\_FOR com um nó de label "Company". Desse último nó, ela retorna a
+propriedade "name"\footnote{https://neo4j.com/developer/cypher-basics-i/}.
 
 \begin{figure}[htbp]
-\centerline{\includegraphics[width=0.9\linewidth]{img/neo4j/neo4j_ps2.png}}
+\centerline{\includegraphics[width=0.9\linewidth]{neo4j/neo4j_ps2.png}}
 \caption{Exemplo de query em Cypher}\label{fig:neo4j2}
 \label{fig}
 \end{figure}
 
 \subsection{OrientDB}
 
-OrientDB~\cite{orientdb} é um SGBD que suporta modelos de documentos, grafos, chave-valor e objetos, com o principal atrativo sendo a capacidade de trabalhar mais de um desses formatos no mesmo gerenciador, criando uma base de dados multi-modelo. Os dados são armazenados como documentos de chave-valor, em que cada valor pode ser um dado primitivo, documentos internos ou listas de outros documentos, e são agrupados em "classes". De nosso principal interesse é a forma como o SGBDG implementa \emph{links} entre esses documentos, que são processados sempre que um documento é processado, de forma a agilizar as transversais que são de interesse em grafos.
+OrientDB~\cite{orientdb} é um SGBD que suporta modelos de documentos, grafos,
+chave-valor e objetos, com o principal atrativo sendo a capacidade de trabalhar
+mais de um desses formatos no mesmo gerenciador, criando uma base de dados
+multi-modelo. Os dados são armazenados como documentos de chave-valor, em que
+cada valor pode ser um dado primitivo, documentos internos ou listas de outros
+documentos, e são agrupados em "classes". De nosso principal interesse é a
+forma como o SGBDG implementa \emph{links} entre esses documentos, que são
+processados sempre que um documento é processado, de forma a agilizar as
+transversais que são de interesse em grafos.
 
-Usado como grafo, cada nó do grafo é armazenado como um registro com um ID próprio e as listas de arcos incidentes (entrando ou saindo), e cada arco também é armazenado com um ID próprio, seus nós de saída e chegada (chamados cabeça e cauda), e um \emph{label} para o tipo de relacionamento entre os vértices. Ambas as entidades, como documentos sem esquema restrito, podem receber qualquer quantidade de propriedades a mais como campos chave-valor. Como todo registro no SGBD possui um ID próprio, o acesso a tais registros é rápido e direto, evitando o processamento de longas listas.
+Usado como grafo, cada nó do grafo é armazenado como um registro com um ID
+próprio e as listas de arcos incidentes (entrando ou saindo), e cada arco
+também é armazenado com um ID próprio, seus nós de saída e chegada (chamados
+cabeça e cauda), e um \emph{label} para o tipo de relacionamento entre os
+vértices. Ambas as entidades, como documentos sem esquema restrito, podem
+receber qualquer quantidade de propriedades a mais como campos chave-valor.
+Como todo registro no SGBD possui um ID próprio, o acesso a tais registros é
+rápido e direto, evitando o processamento de longas listas.
 
-Evitando criar uma nova linguagem de consulta, OrientDB implementa o SQL estendido para funcionalidades de grafos, mantendo a sintaxe \emph{SELECT-FROM-WHERE-GROUP BY} e encapsulamento de consultas, mas perdendo a cláusula \emph{HAVING}. A navegação pelas relações entre os registros do BD é feita através dos links presentes nos registros, e referenciada por \emph{dot notation}. Por exemplo, assumindo que registros da classe \emph{Employee} possuam uma propriedade \emph{city} com um link para registros dessa classe, realizar uma consulta para extrair apenas empregados de uma dada cidade é fácil como mostrado na figura \ref{fig:orientdb_ps1}. Também é possível aplicar funções sobre valores retornados (por exemplo, \emph{sum} para uma agregação), ou usar de métodos nos próprios pares chave-valor, como na figura \ref{fig:orientdb_ps2}.
+Evitando criar uma nova linguagem de consulta, OrientDB implementa o SQL
+estendido para funcionalidades de grafos, mantendo a sintaxe
+\emph{SELECT-FROM-WHERE-GROUP BY} e encapsulamento de consultas, mas perdendo
+a cláusula \emph{HAVING}. A navegação pelas relações entre os registros do BD
+é feita através dos links presentes nos registros, e referenciada por
+\emph{dot notation}. Por exemplo
+\footnote{https://orientdb.org/docs/3.0.x/sql/SQL-Introduction.html}
+, assumindo que registros da classe
+\emph{Employee} possuam uma propriedade \emph{city} com um link para registros
+dessa classe, realizar uma consulta para extrair apenas empregados de uma
+dada cidade é fácil como mostrado na figura \ref{fig:orientdb_ps1}. Também é
+possível aplicar funções sobre valores retornados (por exemplo, \emph{sum}
+para uma agregação), ou usar de métodos nos próprios pares chave-valor, como
+na figura \ref{fig:orientdb_ps2}.
 
 \begin{figure}[htbp]
-\centerline{\includegraphics[width=0.9\linewidth]{img/orientdb/orientdb_ps1.png}}
-\caption{Empregados na cidade de 'Rome', no OrientDB SQL.}\label{fig:orientdb_ps1}
+\centerline{\includegraphics[width=0.9\linewidth]{orientdb/orientdb_ps1.png}}
+\caption{Empregados na cidade de 'Rome', no OrientDB SQL.}\label{
+  fig:orientdb_ps1}
 \label{fig}
 \end{figure}
 
 \begin{figure}[htbp]
-\centerline{\includegraphics[width=0.9\linewidth]{img/orientdb/orientdb_ps2.png}}
-\caption{Retornando o primeiro e último nome de cada empregado concatenados, no OrientDB SQL.}\label{fig:orientdb_ps2}
+\centerline{\includegraphics[width=0.9\linewidth]{orientdb/orientdb_ps2.png}}
+\caption{Retornando o primeiro e último nome de cada empregado concatenados,
+  no OrientDB SQL.}\label{fig:orientdb_ps2}
 \label{fig}
 \end{figure}
 
 \subsection{JanusGraph}
 
-JanusGraph~\cite{janusgraph} é um SGBDG não-nativo distribuído e \emph{open-source}, voltado ao processamento de grafos maiores do que as capacidades de uma só máquina. Usando de uma arquitetura modular, permite a implementação de um ou mais \emph{backends} de armazenamento de dados e índices, e comunicação a aplicações e usuários por uma API Gremlin. Ao contrário da maioria dos SGBDGs, JanusGraph é dependente de esquemas, definidos sobre os nós, arcos e propriedades, mas esse esquema pode tanto ser declarado quanto inferido no uso, e alterado conforme o grafo evolui.
+JanusGraph~\cite{janusgraph} é um SGBDG não-nativo distribuído e
+\emph{open-source}, voltado ao processamento de grafos maiores do que as
+capacidades de uma só máquina. Usando de uma arquitetura modular, permite a
+implementação de um ou mais \emph{backends} de armazenamento de dados e
+índices, e comunicação a aplicações e usuários por uma API Gremlin. Ao
+contrário da maioria dos SGBDGs, JanusGraph é dependente de esquemas,
+definidos sobre os nós, arcos e propriedades, mas esse esquema pode tanto
+ser declarado quanto inferido no uso, e alterado conforme o grafo evolui.
 
-A arquitetura modular do \emph{backend} permite o uso de diferentes ferramentas, dependendo dos objetivos da modelagem. Em especial, casos de uso em que a manutenção da consistência da leitura é garantia necessária são bem servidos pela Apache HBase, ao custo de uma chance de requisições falharem. Por outro lado, Apache Cassandra é o \emph{backend} sugerido no caso de preferência de disponibilidade contra a completude do resultado. Essas ferramentas já estão integradas ao ecossistema Apache Hadoop, e existe a possibilidade de construção de adaptadores para outros \emph{backends} de acordo com a necessidade do usuário. Essa arquitetura está graficamente descrita na figura \ref{fig:janusgraph_ps1}.
+A arquitetura modular do \emph{backend} permite o uso de diferentes
+ferramentas, dependendo dos objetivos da modelagem. Em especial, casos de
+uso em que a manutenção da consistência da leitura é garantia necessária são
+bem servidos pela Apache HBase, ao custo de uma chance de requisições
+falharem. Por outro lado, Apache Cassandra é o \emph{backend} sugerido no
+caso de preferência de disponibilidade contra a completude do resultado.
+Essas ferramentas já estão integradas ao ecossistema Apache Hadoop, e existe
+a possibilidade de construção de adaptadores para outros \emph{backends} de
+acordo com a necessidade do usuário. Essa arquitetura
+\footnote{https://docs.janusgraph.org/} está graficamente descrita na
+figura \ref{fig:janusgraph_ps1}.
 
 \begin{figure}[htbp]
-\centerline{\includegraphics[width=0.9\linewidth]{img/janusgraph/janusgraph_ps1.png}}
+\centerline{\includegraphics[width=0.9\linewidth]{janusgraph/janusgraph_ps1.png}}
 \caption{Arquitetura do JanusGraph}\label{fig:janusgraph_ps1}
 \label{fig}
 \end{figure}
 
 
-Consultas são realizadas usando da linguagem Gremlin, uma linguagem funcional componente do Apache TinkerPop. Nela, operadores de transversal, representando relações entre nós através de arcos, são encadeadas formando uma expressão representante do caminho a ser buscado. Cada passo dessa expressão retorna objetos, que serão processados pelo próximo passo, de forma que a sintaxe não é restrita como a de outras linguagens apresentadas nesse trabalho. No exemplo da figura \ref{fig:janusgraph_ps2}, foi usado um grafo de exemplo listando a mitologia romana, em que a partir de uma transversal $g$ do grafo, encontra-se o nó referente ao herói \emph{hércules}, encontram-se os vértices de seu pai e avô, e retorna-se afinal o nome desse último, \emph{saturno}.
+Consultas são realizadas usando da linguagem Gremlin, uma linguagem funcional
+componente do Apache TinkerPop. Nela, operadores de transversal, representando
+relações entre nós através de arcos, são encadeadas formando uma expressão
+representante do caminho a ser buscado. Cada passo dessa expressão retorna
+objetos, que serão processados pelo próximo passo, de forma que a sintaxe
+não é restrita como a de outras linguagens apresentadas nesse trabalho. No
+exemplo \footnote{https://docs.janusgraph.org/basics/gremlin/}
+da figura \ref{fig:janusgraph_ps2}, foi usado um grafo de exemplo
+listando a mitologia romana, em que a partir de uma transversal $g$ do grafo,
+encontra-se o nó referente ao herói \emph{hércules}, encontram-se os vértices
+de seu pai e avô, e retorna-se afinal o nome desse último, \emph{saturno}.
 
 \begin{figure}[htbp]
-\centerline{\includegraphics[width=0.9\linewidth]{img/janusgraph/janusgraph_ps2.png}}
-\caption{Exemplo de consulta na linguagem Gremlin.}\label{fig:janusgraph_ps2}
+\centerline{\includegraphics[width=0.9\linewidth]{janusgraph/janusgraph_ps2.png}}
+\caption{Exemplo de consulta na linguagem Gremlin, realizada passo a passo
+  para ilustrar o funcionamento interno.}\label{fig:janusgraph_ps2}
 \label{fig}
 \end{figure}
 
-Uma vantagem de usar a linguagem Gremlin e seu framework, Apache TinkerPop, é que são agnósticos em relação ao SGBDG usado, e aceitos por muitos dos SGBDG, inclusive todos desse trabalho. Para o JanusGraph, isso significa uma forma fácil de integração com outras ferramentas e aplicações, que devem simplesmente interagir com o Gremlin API e construir consultas que esse possa trabalhar.
+Uma vantagem de usar a linguagem Gremlin e seu framework, Apache TinkerPop,
+é que são agnósticos em relação ao SGBDG usado, e aceitos por muitos dos SGBDG,
+inclusive todos desse trabalho. Para o JanusGraph, isso significa uma forma
+fácil de integração com outras ferramentas e aplicações, que devem
+simplesmente interagir com o Gremlin API e construir consultas que esse
+possa trabalhar.
 
-\subsection{Horton+}
-\cite{horton}
+% \subsection{Horton+}
+% \cite{horton}
 
-\subsection{ThingSpan}
-\cite{thingspan}
+% \subsection{ThingSpan}
+% \cite{thingspan}
 
 \section{Graph Analytics Systems}
 Com o crescimento das aplicações na internet e em outras áreas como
@@ -710,13 +852,32 @@ arcos entre os vértices, ou que possuem um diâmetro muito grande.
 
 \section{Conclusão}
 
-A representação de grandes coleções de dados como grafos é um desafio para aplicações modernas que, chegando a bilhões de nós e arcos, não podem mais ser limitadas em seu escopo às capacidades de um só servidor, necessitando de soluções distribuídas. Nesse trabalho buscamos elencar e comparar diversas soluções a esse desafio, de forma que um usuário possa identificar qual melhor se aplica a sua necessidade específica.
+A representação de grandes coleções de dados como grafos é um desafio para
+aplicações modernas que, chegando a bilhões de nós e arcos, não podem mais ser
+limitadas em seu escopo às capacidades de um só servidor, necessitando de
+soluções distribuídas. Nesse trabalho buscamos elencar e comparar diversas
+soluções a esse desafio, de forma que um usuário possa identificar qual melhor
+se aplica a sua necessidade específica.
 
-Sistemas Gerenciadores de Bancos de Dados de Grafos são uma solução robusta, mantendo as melhores qualidades dos Bancos de Dados Relacionais, estentidas com a capacidade de alavancar a estrutura do grafo na recuperação de consultas. Entretanto, essas ferramentas são raramente preparadas para um ambiente realmente distribuído, e a transição para esse paradigma causa perdas em expressividade e clareza na comunicação, o que leva a dificuldade de aceitação por parte dos usuários.
+Sistemas Gerenciadores de Bancos de Dados de Grafos são uma solução robusta,
+mantendo as melhores qualidades dos Bancos de Dados Relacionais, estentidas
+com a capacidade de alavancar a estrutura do grafo na recuperação de
+consultas. Entretanto, essas ferramentas são raramente preparadas para um
+ambiente realmente distribuído, e a transição para esse paradigma causa
+perdas em expressividade e clareza na comunicação, o que leva a dificuldade
+de aceitação por parte dos usuários.
 
-\emph{Graph Analytics Systems} contrapõem-se a SGBDGs ao instrumentalizar a distribuição dos dados como primeira prioridade, construindo a estrutura do grafo e suas relações como mecanismos a auxiliar o processamento. Dessa forma, as tarefas distribuídas podem ser mais eficientemente resolvidas, através da implementação de algoritmos feitos especificamente para cada tarefa. Por outro lado, essas ferramentas não possuem uma construção direta do grafo, o que limita os usos possíveis e estabelece mais barreiras à compreensão do usuário.
+\emph{Graph Analytics Systems} contrapõem-se a SGBDGs ao instrumentalizar a
+distribuição dos dados como primeira prioridade, construindo a estrutura do
+grafo e suas relações como mecanismos a auxiliar o processamento. Dessa forma,
+as tarefas distribuídas podem ser mais eficientemente resolvidas, através da
+implementação de algoritmos feitos especificamente para cada tarefa. Por outro
+lado, essas ferramentas não possuem uma construção direta do grafo, o que
+limita os usos possíveis e estabelece mais barreiras à compreensão do usuário.
 
-Assim, é crucial que o usuário que vá representar um grafo em um ambiente distribuído conheça bem seus dados, suas capacidades e suas necessidades, de forma a identificar a melhor solução a ser implementada.
+Assim, é crucial que o usuário que vá representar um grafo em um ambiente
+distribuído conheça bem seus dados, suas capacidades e suas necessidades,
+de forma a identificar a melhor solução a ser implementada.
 
 \begin{thebibliography}{00}
 \bibitem{nosqlorg} ``NoSQL Databases'', http://nosql-database.org/.
@@ -772,7 +933,8 @@ Assim, é crucial que o usuário que vá representar um grafo em um ambiente dis
     http://tinkerpop.apache.org/
 \bibitem{janusgraph} ``JanusGraph'',
      https://docs.janusgraph.org/
-\bibitem{horton} M. Sarwat, S. Elnikety, Y. He, and M. F. Mokbel, ``Horton+: A Distributed System for Processing Declarative Reachability Queries over Partitioned Graphs'', PVLDB, vol. 6, no. 14, pp. 1918–1929, 2013.
-\bibitem{thingspan} ``ThingSpan'' [Online]. Available: http://www.objectivity.com/products/thingspan/.
+% \bibitem{horton} M. Sarwat, S. Elnikety, Y. He, and M. F. Mokbel, ``Horton+: A Distributed System for Processing Declarative Reachability Queries over Partitioned Graphs'', PVLDB, vol. 6, no. 14, pp. 1918–1929, 2013.
+% \bibitem{thingspan} ``ThingSpan'' [Online]. Available: http://www.objectivity.com/products/thingspan/.
+
 \end{thebibliography}
 \end{document}
