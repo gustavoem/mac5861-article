@@ -399,7 +399,7 @@ Usa estrutura do grafo & Sim & Não \\
 
 \section{Sistemas Gerenciadores de Bancos de Dados em Grafos}
 
-Os Sistemas Gerenciadores de Bancos de Dados em Grafos, a seguir referenciados como SGBDG, são as ferramentas que focam-se em manter todas as garantias de um SGBDR, mas usando de uma representação de dados voltada a Grafos ao invés de Relações. Portanto, essas ferramentas são focadas em tarefas OLTP, com acesso de baixa latência a pequenas partes do grafo, e trazem vantagens como garantia de persistência e otimização de \emph{queries}. Muitos sistemas desse tipo são centralizados, como por exemplo Neo4j \cite{neo4j} e OrientDB \cite{orientdb}, que entretanto oferecem replicação como uma solução para fornecer alta disponibilidade para consultas de leitura, mas já estamos vendo o surgimento e popularização de sistemas distribuídos, como JanusGraph \cite{janusgraph}, Horton+ \cite{horton} e ThingSpan \cite{thingspan}. Esses últimos são tipicamente construídos sobre um \emph{backend} distribuído, como Apache Hadoop ou Cassandra, visando a construção de um sistema em que os servidores do \emph{cluster} não compartilham nenhum recurso, e o sistema então se ocupa da tarefa de comunicação interna.
+Os Sistemas Gerenciadores de Bancos de Dados em Grafos, a seguir referenciados como SGBDG, são as ferramentas que focam-se em manter todas as garantias de um SGBDR, mas usando de uma representação de dados voltada a Grafos ao invés de Relações. Portanto, essas ferramentas são focadas em tarefas OLTP, com acesso de baixa latência a pequenas partes do grafo, e trazem vantagens como garantia de persistência e otimização de \emph{queries} \cite{nole-sartiani}. Muitos sistemas desse tipo são centralizados, como por exemplo Neo4j~\cite{neo4j} e OrientDB~\cite{orientdb}, que entretanto oferecem replicação como uma solução para fornecer alta disponibilidade para consultas de leitura, mas já estamos vendo o surgimento e popularização de sistemas distribuídos, como JanusGraph~\cite{janusgraph}, Horton+ \cite{horton} e ThingSpan~\cite{thingspan}. Esses últimos são tipicamente construídos sobre um \emph{backend} distribuído, como Apache Hadoop ou Cassandra, visando a construção de um sistema em que os servidores do \emph{cluster} não compartilham nenhum recurso, e o sistema então se ocupa da tarefa de comunicação interna.
 
 Todas essas ferramentas implementam alguma forma de consulta aos dados. Várias possuem sua própria linguagem de consulta declarativa, como a Cypher do Neo4j, uma linguagem de checagem sobre todo o grafo, como a Gremlin da Apache TinkerPop usada no JanusGraph e OrientDB, ou mesmo uma extensão da SQL que permita a expressão de transversais no grafo, como está disponível no OrientDB. Também é muito comum que sejam disponibilizadas APIs para processamento de transações e processamento de tarefas. A maioria dessas linguagens não possui interpretação semântica nativa, a exceção sendo SPARQL, uma linguagem montada para a consulta de bancos de dados de RDF, que por vezes é disponibilizada nas ferramentas aqui apresentadas.
 
@@ -407,7 +407,7 @@ Um tipo de ferramenta que possui muitas características similares a SGBDG, incl
 
 \subsection{Neo4j}
 
-Neo4j é o SGBDG mais popular atualmente, de acordo com o ranking DB-Engines \cite{db_engines}. É um SGBDG nativo, centralizado, com uma versão \emph{open-source} (\emph{Community}) e uma restrita (\emph{Enterprise}). Na versão \emph{open-source}, são disponíveis a linguagem de consulta Cypher e APIs para várias linguagens de programação (.Net, Java, JavaScript, Go, e Python), além das garantias de transação similares a ACID. Na versão paga, há extensões como a implementação em um \emph{cluster}, com replicação completa do grafo para agilizar transações de consulta simultâneas, mas sem \emph{sharding} ou particionamento do grafo original. Também são oferecidas nessa versão ferramentas de \emph{backup online} e gerenciamento de acessos. Uma visão geral dessa ferramenta está na figura \ref{fig:neo4j}. O Neo4j usa do \emph{Property Graph Model}, um grafo direcionado e onde se representam os nós, arcos e propriedades de nós ou arcos, que são guardadas em três arquivos separados
+Neo4j~\cite{neo4j} é o SGBDG mais popular atualmente, de acordo com o ranking DB-Engines \cite{db_engines}. É um SGBDG nativo, centralizado, com uma versão \emph{open-source} (\emph{Community}) e uma restrita (\emph{Enterprise}). Na versão \emph{open-source}, são disponíveis a linguagem de consulta Cypher e APIs para várias linguagens de programação (.Net, Java, JavaScript, Go, e Python), além das garantias de transação similares a ACID. Na versão paga, há extensões como a implementação em um \emph{cluster}, com replicação completa do grafo para agilizar transações de consulta simultâneas, mas sem \emph{sharding} ou particionamento do grafo original. Também são oferecidas nessa versão ferramentas de \emph{backup online} e gerenciamento de acessos. Uma visão geral dessa ferramenta está na figura \ref{fig:neo4j}. O Neo4j usa do \emph{Property Graph Model}, um grafo direcionado e onde se representam os nós, arcos e propriedades de nós ou arcos, que são guardadas em três arquivos separados
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[width=0.9\linewidth]{img/neo4j/neo4j_graph_platform.jpg}}
@@ -429,7 +429,7 @@ No exemplo da figura \ref{fig:neo4j2}, a query busca um nó de label Pessoa, com
 
 \subsection{OrientDB}
 
-OrientDB é um SGBD que suporta modelos de documentos, grafos, chave-valor e objetos, com o principal atrativo sendo a capacidade de trabalhar mais de um desses formatos no mesmo gerenciador, criando uma base de dados multi-modelo. Os dados são armazenados como documentos de chave-valor, em que cada valor pode ser um dado primitivo, documentos internos ou listas de outros documentos, e são agrupados em "classes". De nosso principal interesse é a forma como o SGBDG implementa \emph{links} entre esses documentos, que são processados sempre que um documento é processado, de forma a agilizar as transversais que são de interesse em grafos.
+OrientDB~\cite{orientdb} é um SGBD que suporta modelos de documentos, grafos, chave-valor e objetos, com o principal atrativo sendo a capacidade de trabalhar mais de um desses formatos no mesmo gerenciador, criando uma base de dados multi-modelo. Os dados são armazenados como documentos de chave-valor, em que cada valor pode ser um dado primitivo, documentos internos ou listas de outros documentos, e são agrupados em "classes". De nosso principal interesse é a forma como o SGBDG implementa \emph{links} entre esses documentos, que são processados sempre que um documento é processado, de forma a agilizar as transversais que são de interesse em grafos.
 
 Usado como grafo, cada nó do grafo é armazenado como um registro com um ID próprio e as listas de arcos incidentes (entrando ou saindo), e cada arco também é armazenado com um ID próprio, seus nós de saída e chegada (chamados cabeça e cauda), e um \emph{label} para o tipo de relacionamento entre os vértices. Ambas as entidades, como documentos sem esquema restrito, podem receber qualquer quantidade de propriedades a mais como campos chave-valor. Como todo registro no SGBD possui um ID próprio, o acesso a tais registros é rápido e direto, evitando o processamento de longas listas.
 
@@ -447,8 +447,33 @@ Evitando criar uma nova linguagem de consulta, OrientDB implementa o SQL estendi
 \label{fig}
 \end{figure}
 
-\cite{nole-sartiani}
+\subsection{JanusGraph}
+
+JanusGraph~\cite{janusgraph} é um SGBDG não-nativo distribuído e \emph{open-source}, voltado ao processamento de grafos maiores do que as capacidades de uma só máquina. Usando de uma arquitetura modular, permite a implementação de um ou mais \emph{backends} de armazenamento de dados e índices, e comunicação a aplicações e usuários por uma API Gremlin. Ao contrário da maioria dos SGBDGs, JanusGraph é dependente de esquemas, definidos sobre os nós, arcos e propriedades, mas esse esquema pode tanto ser declarado quanto inferido no uso, e alterado conforme o grafo evolui.
+
+A arquitetura modular do \emph{backend} permite o uso de diferentes ferramentas, dependendo dos objetivos da modelagem. Em especial, casos de uso em que a manutenção da consistência da leitura é garantia necessária são bem servidos pela Apache HBase, ao custo de uma chance de requisições falharem. Por outro lado, Apache Cassandra é o \emph{backend} sugerido no caso de preferência de disponibilidade contra a completude do resultado. Essas ferramentas já estão integradas ao ecossistema Apache Hadoop, e existe a possibilidade de construção de adaptadores para outros \emph{backends} de acordo com a necessidade do usuário. Essa arquitetura está graficamente descrita na figura \ref{fig:janusgraph_ps1}.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.9\linewidth]{img/janusgraph/janusgraph_ps1.png}}
+\caption{Arquitetura do JanusGraph}\label{fig:janusgraph_ps1}
+\label{fig}
+\end{figure}
+
+
+Consultas são realizadas usando da linguagem Gremlin, uma linguagem funcional componente do Apache TinkerPop. Nela, operadores de transversal, representando relações entre nós através de arcos, são encadeadas formando uma expressão representante do caminho a ser buscado. Cada passo dessa expressão retorna objetos, que serão processados pelo próximo passo, de forma que a sintaxe não é restrita como a de outras linguagens apresentadas nesse trabalho. No exemplo da figura \ref{fig:janusgraph_ps2}, foi usado um grafo de exemplo listando a mitologia romana, em que a partir de uma transversal $g$ do grafo, encontra-se o nó referente ao herói \emph{hércules}, encontram-se os vértices de seu pai e avô, e retorna-se afinal o nome desse último, \emph{saturno}.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.9\linewidth]{img/janusgraph/janusgraph_ps2.png}}
+\caption{Exemplo de consulta na linguagem Gremlin.}\label{fig:janusgraph_ps2}
+\label{fig}
+\end{figure}
+
+Uma vantagem de usar a linguagem Gremlin e seu framework, Apache TinkerPop, é que são agnósticos em relação ao SGBDG usado, e aceitos por muitos dos SGBDG, inclusive todos desse trabalho. Para o JanusGraph, isso significa uma forma fácil de integração com outras ferramentas e aplicações, que devem simplesmente interagir com o Gremlin API e construir consultas que esse possa trabalhar.
+
+\subsection{Horton+}
 \cite{horton}
+
+\subsection{ThingSpan}
 \cite{thingspan}
 
 \section{Graph Analytics Systems}
@@ -677,10 +702,15 @@ arcos entre os vértices, ou que possuem um diâmetro muito grande.
         2014.
 
 \bibitem{sahu} Sahu, Siddhartha et al. ``The Ubiquity of Large Graphs and Surprising Challenges of Graph Processing: Extended Survey'' The VLDB Journal (2019): n. pag. Crossref. Web.
+\bibitem{nole-sartiani} {\color{red} preciso pegar essa referencia certinha} M. Nolé, C. Sartiani, ``Graph Management Systems: A Survey''
+\bibitem{neo4j} ``The Neo4j Getting Started Guide v3.5'',
+    https://neo4j.com/docs/getting-started/current/
+\bibitem{orientdb} ``OrientDB Manual - version 3.0.14'',
+    https://orientdb.org/docs/3.0.x/
+\bibitem{tinkerpop} ``Apache TinkerPop'',
+    http://tinkerpop.apache.org/
+\bibitem{janusgraph} {\color{red} preciso pegar essa referencia certinha}
 \bibitem{horton} M. Sarwat, S. Elnikety, Y. He, and M. F. Mokbel, ``Horton+: A Distributed System for Processing Declarative Reachability Queries over Partitioned Graphs'', PVLDB, vol. 6, no. 14, pp. 1918–1929, 2013.
 \bibitem{thingspan} ``ThingSpan'' [Online]. Available: http://www.objectivity.com/products/thingspan/.
-\bibitem{nole-sartiani} {\color{red} preciso pegar essa referencia certinha} M. Nolé, C. Sartiani, ``Graph Management Systems: A Survey''
-\bibitem{neo4j} {\color{red} preciso pegar essa referencia certinha}
-\bibitem{janusgraph} {\color{red} preciso pegar essa referencia certinha}
 \end{thebibliography}
 \end{document}
